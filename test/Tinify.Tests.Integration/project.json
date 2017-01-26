@@ -1,0 +1,17 @@
+{
+  "supports": {},
+  "runtimes": {
+    "win10-x64": {},
+    "osx.10.12-x64": {},
+  },
+  "testRunner": "nunit",
+  "dependencies": {
+    "NETStandard.Library": "1.6.1",
+    "NUnit": "3.6.0-dev-03481",
+    "dotnet-test-nunit": "3.4.0-beta-3",
+    "Tinify": "*",
+  },
+  "frameworks": {
+    "netcoreapp1.1": {},
+  },
+}

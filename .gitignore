@@ -1,0 +1,6 @@
+.vs
+packages
+TestResult.xml
+Tinify.userprefs
+**/obj
+**/bin
