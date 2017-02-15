@@ -92,7 +92,7 @@ namespace TinifyAPI.Tests
         {
             Subject.Request(HttpMethod.Post, "/shrink").Wait();
             Assert.AreEqual(
-                "Tinify/1.0.0.0 .NETStandard/1.5 (OSX .NET Core 4.6.24214.01)",
+                Internal.Platform.UserAgent,
                 string.Join(" ", Helper.LastRequest.Headers.GetValues("User-Agent"))
             );
         }
@@ -129,7 +129,7 @@ namespace TinifyAPI.Tests
         {
             Subject.Request(HttpMethod.Post, "/shrink").Wait();
             Assert.AreEqual(
-                "Tinify/1.0.0.0 .NETStandard/1.5 (OSX .NET Core 4.6.24214.01) TestApp/0.1",
+                Internal.Platform.UserAgent + " TestApp/0.1",
                 string.Join(" ", Helper.LastRequest.Headers.GetValues("User-Agent"))
             );
         }
