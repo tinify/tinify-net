@@ -11,7 +11,7 @@ configuration: Release
 
 environment:
   TINIFY_KEY:
-    secure: kbQXGT2AEcagCNXfWohm5IeEGbWBkWqgeUohK8ju7qnTQH05Ogk4bZprSUMuwkJv
+    secure: ZF/29NnonLrQuvAfRbhotwBPdrvQ+D+ayXVxWji8HaLYKSV2WH5kTDJSGSfB4j7S
 
 build_script:
 - ps: .\Build.ps1
