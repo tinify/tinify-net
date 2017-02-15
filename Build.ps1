@@ -59,9 +59,13 @@ Invoke-MSBuild
 $revision = @{ $true = $env:APPVEYOR_BUILD_NUMBER; $false = 1 }[$env:APPVEYOR_BUILD_NUMBER -ne $NULL];
 $revision = "{0:D4}" -f [convert]::ToInt32($revision, 10)
 
-exec { & dotnet test .\tests\Tinify.Tests -c Release }
+exec { & dotnet test .\test\Tinify.Tests -c Release }
 
-exec { & dotnet test .\tests\Tinify.Tests.Integration -c Release }
+#Only run integration tests if have a TINIFY_KEY environment key defined. If we don't, we're on a Pull Request most likely
+if(Test-Path env:TINIFY_KEY -And $env:TINIFY_KEY -ne "")
+{
+	exec { & dotnet test .\test\Tinify.Tests.Integration -c Release }
+}
 
 exec { & dotnet pack .\src\Tinify -c Release -o .\artifacts --version-suffix=$revision }
 
