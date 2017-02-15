@@ -64,7 +64,7 @@ namespace TinifyAPI.Tests.Integration
             Tinify.Key = Environment.GetEnvironmentVariable("TINIFY_KEY");
             Tinify.Proxy = Environment.GetEnvironmentVariable("TINIFY_PROXY");
 
-            var unoptimizedPath = "test/Tinify.Tests.Integration/Examples/voormedia.png";
+            var unoptimizedPath = AppContext.BaseDirectory + "/examples/voormedia.png";
             optimized = Tinify.FromFile(unoptimizedPath);
         }
 

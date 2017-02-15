@@ -1,13 +1,15 @@
 {
+  "version": "1.0.0-alpha-*",
   "supports": {},
   "buildOptions": {
-    "embed": ["data/cacert.pem"],
-  },
-  "dependencies": {
-    "NETStandard.Library": "1.6.1",
-    "Newtonsoft.Json": "9.0.1",
+    "embed": [ "data/cacert.pem" ]
   },
   "frameworks": {
-    "netstandard1.5": {},
-  },
+    "netstandard1.5": {
+      "dependencies": {
+        "NETStandard.Library": "1.6.1",
+        "Newtonsoft.Json": "9.0.1"
+      }
+    }
+  }
 }
