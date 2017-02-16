@@ -5,20 +5,6 @@ using System.IO;
 using System.Text;
 using System.Threading.Tasks;
 
-// using TinifyClient;
-// using TinifyAPI;
-// using TinifyNET;
-// using Tinify.Net;
-//
-// class Compress
-// {
-//   static void Main()
-//   {
-//     Tinify.Key = "YOUR_API_KEY";
-//     Tinify.FromFile("unoptimized.png").ToFile("optimized.png");
-//   }
-// }
-
 namespace TinifyAPI.Tests.Integration
 {
     sealed class TempFile : IDisposable
