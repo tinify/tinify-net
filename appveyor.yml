@@ -1,0 +1,43 @@
+version: '{build}'
+
+pull_requests:
+  do_not_increment_build_number: true
+
+branches:  
+  only:
+  - master
+
+configuration: Release
+
+environment:
+  TINIFY_KEY:
+    secure: ZF/29NnonLrQuvAfRbhotwBPdrvQ+D+ayXVxWji8HaLYKSV2WH5kTDJSGSfB4j7S
+
+build_script:
+- ps: .\Build.ps1
+
+test: off  
+
+nuget:
+  disable_publish_on_pr: true
+
+artifacts:
+- path: artifacts\**\*.nupkg
+  name: NuGet
+
+deploy:
+- provider: NuGet
+  name: ci
+  server: https://www.myget.org/F/tinify/api/v2/package
+  api_key:
+    secure: gvEM4qNBNhsLu0cvJa+M3WJMNPBvCvEhYFc4xPWYfK7Ed1ouyH9B3uuMyQWeJ8bC
+  skip_symbols: true
+  on:
+    branch: master
+- provider: NuGet
+  name: production
+  api_key:
+    secure: Mjah+A6dZO+qTtBebeFB76vBD4jePJrmttEBKEjmYL3MsLRmljOedAMoP5Cc9TI3
+  on:
+    branch: master
+    appveyor_repo_tag: true
