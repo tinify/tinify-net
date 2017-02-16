@@ -167,7 +167,7 @@ namespace TinifyAPI.Tests
     }
 
     [TestFixture]
-    public class Client_Request_WithTimeout
+    public class Client_Request_WithTimeout_Once
     {
         public Client Subject { get; set; }
         string key = "key";
@@ -181,10 +181,44 @@ namespace TinifyAPI.Tests
             {
                 throw new TaskCanceledException();
             });
+
+            Helper.MockHandler.Expect("https://api.tinify.com/shrink").Respond(
+                (HttpStatusCode) 201
+            );
         }
 
         [Test]
-        public void Should_ThrowConnectionError()
+        public void Should_ReturnResponse()
+        {
+            var response = Subject.Request(HttpMethod.Post, "/shrink").Result;
+            Assert.AreEqual(null, response.Content);
+        }
+    }
+
+    [TestFixture]
+    public class Client_Request_WithTimeout_Repeatedly
+    {
+        public Client Subject { get; set; }
+        string key = "key";
+
+        [SetUp]
+        public void SetUp()
+        {
+            Subject = new Client(key);
+            Helper.MockClient(Subject);
+            Helper.MockHandler.Expect("https://api.tinify.com/shrink").Respond(req =>
+            {
+                throw new TaskCanceledException();
+            });
+
+            Helper.MockHandler.Expect("https://api.tinify.com/shrink").Respond(req =>
+            {
+                throw new TaskCanceledException();
+            });
+        }
+
+        [Test]
+        public void Should_ThrowConnectionException()
         {
             var error = Assert.ThrowsAsync<ConnectionException>(async () =>
             {
@@ -199,7 +233,7 @@ namespace TinifyAPI.Tests
     }
 
     [TestFixture]
-    public class Client_Request_WithSocketError
+    public class Client_Request_WithSocketError_Once
     {
         public Client Subject { get; set; }
         string key = "key";
@@ -213,10 +247,44 @@ namespace TinifyAPI.Tests
             {
                 throw new HttpRequestException("An error occurred while sending the request");
             });
+
+            Helper.MockHandler.Expect("https://api.tinify.com/shrink").Respond(
+                (HttpStatusCode) 201
+            );
         }
 
         [Test]
-        public void Should_ThrowConnectionError()
+        public void Should_ReturnResponse()
+        {
+            var response = Subject.Request(HttpMethod.Post, "/shrink").Result;
+            Assert.AreEqual(null, response.Content);
+        }
+    }
+
+    [TestFixture]
+    public class Client_Request_WithSocketError_Repeatedly
+    {
+        public Client Subject { get; set; }
+        string key = "key";
+
+        [SetUp]
+        public void SetUp()
+        {
+            Subject = new Client(key);
+            Helper.MockClient(Subject);
+            Helper.MockHandler.Expect("https://api.tinify.com/shrink").Respond(req =>
+            {
+                throw new HttpRequestException("An error occurred while sending the request");
+            });
+
+            Helper.MockHandler.Expect("https://api.tinify.com/shrink").Respond(req =>
+            {
+                throw new HttpRequestException("An error occurred while sending the request");
+            });
+        }
+
+        [Test]
+        public void Should_ThrowConnectionException()
         {
             var error = Assert.ThrowsAsync<ConnectionException>(async () =>
             {
@@ -231,7 +299,7 @@ namespace TinifyAPI.Tests
     }
 
     [TestFixture]
-    public class Client_Request_WithUnexpectedError
+    public class Client_Request_WithUnexpectedError_Once
     {
         public Client Subject { get; set; }
         string key = "key";
@@ -245,10 +313,44 @@ namespace TinifyAPI.Tests
             {
                 throw new System.Exception("some error");
             });
+
+            Helper.MockHandler.Expect("https://api.tinify.com/shrink").Respond(
+                (HttpStatusCode) 201
+            );
         }
 
         [Test]
-        public void Should_ThrowConnectionError()
+        public void Should_ReturnResponse()
+        {
+            var response = Subject.Request(HttpMethod.Post, "/shrink").Result;
+            Assert.AreEqual(null, response.Content);
+        }
+    }
+
+    [TestFixture]
+    public class Client_Request_WithUnexpectedError_Repeatedly
+    {
+        public Client Subject { get; set; }
+        string key = "key";
+
+        [SetUp]
+        public void SetUp()
+        {
+            Subject = new Client(key);
+            Helper.MockClient(Subject);
+            Helper.MockHandler.Expect("https://api.tinify.com/shrink").Respond(req =>
+            {
+                throw new System.Exception("some error");
+            });
+
+            Helper.MockHandler.Expect("https://api.tinify.com/shrink").Respond(req =>
+            {
+                throw new System.Exception("some error");
+            });
+        }
+
+        [Test]
+        public void Should_ThrowConnectionException()
         {
             var error = Assert.ThrowsAsync<ConnectionException>(async () =>
             {
@@ -263,7 +365,7 @@ namespace TinifyAPI.Tests
     }
 
     [TestFixture]
-    public class Client_Request_WithServerError
+    public class Client_Request_WithServerError_Once
     {
         public Client Subject { get; set; }
         string key = "key";
@@ -277,10 +379,44 @@ namespace TinifyAPI.Tests
                 (HttpStatusCode) 584,
                 new StringContent("{\"error\":\"InternalServerError\",\"message\":\"Oops!\"}")
             );
+
+            Helper.MockHandler.Expect("https://api.tinify.com/shrink").Respond(
+                (HttpStatusCode) 201
+            );
         }
 
         [Test]
-        public void Should_ThrowConnectionError()
+        public void Should_ReturnResponse()
+        {
+            var response = Subject.Request(HttpMethod.Post, "/shrink").Result;
+            Assert.AreEqual(null, response.Content);
+        }
+    }
+
+    [TestFixture]
+    public class Client_Request_WithServerError_Repeatedly
+    {
+        public Client Subject { get; set; }
+        string key = "key";
+
+        [SetUp]
+        public void SetUp()
+        {
+            Subject = new Client(key);
+            Helper.MockClient(Subject);
+            Helper.MockHandler.Expect("https://api.tinify.com/shrink").Respond(
+                (HttpStatusCode) 584,
+                new StringContent("{\"error\":\"InternalServerError\",\"message\":\"Oops!\"}")
+            );
+
+            Helper.MockHandler.Expect("https://api.tinify.com/shrink").Respond(
+                (HttpStatusCode) 584,
+                new StringContent("{\"error\":\"InternalServerError\",\"message\":\"Oops!\"}")
+            );
+        }
+
+        [Test]
+        public void Should_ThrowConnectionException()
         {
             var error = Assert.ThrowsAsync<ServerException>(async () =>
             {
@@ -295,7 +431,7 @@ namespace TinifyAPI.Tests
     }
 
     [TestFixture]
-    public class Client_Request_WithBadServerResponse
+    public class Client_Request_WithBadServerResponse_Once
     {
         public Client Subject { get; set; }
         string key = "key";
@@ -309,10 +445,44 @@ namespace TinifyAPI.Tests
                 (HttpStatusCode) 543,
                 new StringContent("<!-- this is not json -->")
             );
+
+            Helper.MockHandler.Expect("https://api.tinify.com/shrink").Respond(
+                (HttpStatusCode) 201
+            );
         }
 
         [Test]
-        public void Should_ThrowConnectionError()
+        public void Should_ReturnResponse()
+        {
+            var response = Subject.Request(HttpMethod.Post, "/shrink").Result;
+            Assert.AreEqual(null, response.Content);
+        }
+    }
+
+    [TestFixture]
+    public class Client_Request_WithBadServerResponse_Repeatedly
+    {
+        public Client Subject { get; set; }
+        string key = "key";
+
+        [SetUp]
+        public void SetUp()
+        {
+            Subject = new Client(key);
+            Helper.MockClient(Subject);
+            Helper.MockHandler.Expect("https://api.tinify.com/shrink").Respond(
+                (HttpStatusCode) 543,
+                new StringContent("<!-- this is not json -->")
+            );
+
+            Helper.MockHandler.Expect("https://api.tinify.com/shrink").Respond(
+                (HttpStatusCode) 543,
+                new StringContent("<!-- this is not json -->")
+            );
+        }
+
+        [Test]
+        public void Should_ThrowConnectionException()
         {
             var error = Assert.ThrowsAsync<ServerException>(async () =>
             {
@@ -345,7 +515,7 @@ namespace TinifyAPI.Tests
         }
 
         [Test]
-        public void Should_ThrowConnectionError()
+        public void Should_ThrowClientException()
         {
             var error = Assert.ThrowsAsync<ClientException>(async () =>
             {
@@ -377,7 +547,7 @@ namespace TinifyAPI.Tests
         }
 
         [Test]
-        public void Should_ThrowConnectionError()
+        public void Should_ThrowAccountException()
         {
             var error = Assert.ThrowsAsync<AccountException>(async () =>
             {

@@ -13,6 +13,9 @@ namespace TinifyAPI.Tests
         static FieldInfo httpHandlerField = typeof(HttpMessageInvoker)
             .GetField("_handler", BindingFlags.Instance | BindingFlags.NonPublic);
 
+        static FieldInfo retryDelayField = typeof(Client)
+            .GetField("RetryDelay", BindingFlags.Static | BindingFlags.Public);
+
         public static MockHttpMessageHandler MockHandler;
         public static HttpRequestMessage LastRequest;
         public static string LastBody;
@@ -24,6 +27,8 @@ namespace TinifyAPI.Tests
             /* Terrible hack to get/mock/replace client property. */
             var client = (HttpClient) httpClientField.GetValue(test);
             httpHandlerField.SetValue(client, MockHandler);
+
+            retryDelayField.SetValue(null, (ushort) 10);
         }
 
         public static void EnqueuShrink(Client test)

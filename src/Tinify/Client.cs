@@ -17,6 +17,9 @@ namespace TinifyAPI
     {
         public static readonly Uri ApiEndpoint = new Uri("https://api.tinify.com");
 
+        public static readonly ushort RetryCount = 1;
+        public static readonly ushort RetryDelay = 500;
+
         public static readonly string UserAgent = Internal.Platform.UserAgent;
 
         HttpClient client;
@@ -89,46 +92,54 @@ namespace TinifyAPI
 
         public async Task<HttpResponseMessage> Request(Method method, Uri url, HttpContent body = null)
         {
-            var request = new HttpRequestMessage(method, url)
+            for (short retries = (short) RetryCount; retries >= 0; retries--)
             {
-                Content = body
-            };
-
-            HttpResponseMessage response;
-            try
-            {
-                response = await client.SendAsync(request).ConfigureAwait(false);
-            }
-            catch (OperationCanceledException err)
-            {
-                throw new ConnectionException("Timeout while connecting", err);
-            }
-            catch (System.Exception err)
-            {
-                if (err.InnerException != null)
+                if (retries < RetryCount)
                 {
-                    err = err.InnerException;
+                    await Task.Delay(RetryDelay);
                 }
 
-                throw new ConnectionException("Error while connecting: " + err.Message, err);
-            }
-
-            if (response.Headers.Contains("Compression-Count"))
-            {
-                var compressionCount = response.Headers.GetValues("Compression-Count").First();
-                uint parsed;
-                if (uint.TryParse(compressionCount, out parsed))
+                var request = new HttpRequestMessage(method, url)
                 {
-                    Tinify.CompressionCount = parsed;
-                }
-            }
+                    Content = body
+                };
 
-            if (response.IsSuccessStatusCode)
-            {
-                return response;
-            }
-            else
-            {
+                HttpResponseMessage response;
+                try
+                {
+                    response = await client.SendAsync(request).ConfigureAwait(false);
+                }
+                catch (OperationCanceledException err)
+                {
+                    if (retries > 0) continue;
+                    throw new ConnectionException("Timeout while connecting", err);
+                }
+                catch (System.Exception err)
+                {
+                    if (err.InnerException != null)
+                    {
+                        err = err.InnerException;
+                    }
+
+                    if (retries > 0) continue;
+                    throw new ConnectionException("Error while connecting: " + err.Message, err);
+                }
+
+                if (response.Headers.Contains("Compression-Count"))
+                {
+                    var compressionCount = response.Headers.GetValues("Compression-Count").First();
+                    uint parsed;
+                    if (uint.TryParse(compressionCount, out parsed))
+                    {
+                        Tinify.CompressionCount = parsed;
+                    }
+                }
+
+                if (response.IsSuccessStatusCode)
+                {
+                    return response;
+                }
+
                 var data = new { message = "", error = "" };
                 try
                 {
@@ -145,8 +156,11 @@ namespace TinifyAPI
                     };
                 }
 
+                if (retries > 0 && (uint) response.StatusCode >= 500) continue;
                 throw Exception.Create(data.message, data.error, (uint) response.StatusCode);
             }
+
+            return null;
         }
     }
 }
