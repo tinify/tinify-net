@@ -138,5 +138,28 @@ namespace TinifyAPI.Tests.Integration
                 );
             }
         }
+
+        [Test]
+        public void Should_PreserveMetadata()
+        {
+            using (var file = new TempFile())
+            {
+                var options = new string[] {"copyright", "location"};
+                optimized.Preserve(options).ToFile(file.Path).Wait();
+
+                var size = new FileInfo(file.Path).Length;
+                var contents = File.ReadAllBytes(file.Path);
+
+                Assert.Greater(size, 1000);
+                Assert.Less(size, 2000);
+
+                /* width == 137 */
+                CollectionAssert.IsSubsetOf(new byte[] {0, 0, 0, 0x89}, contents);
+                CollectionAssert.IsSubsetOf(
+                    Encoding.ASCII.GetBytes("Copyright Voormedia"),
+                    contents
+                );
+            }
+        }
     }
 }
