@@ -27,7 +27,7 @@ namespace TinifyAPI
             set
             {
                 key = value;
-                client = null;
+                ResetClient();
             }
         }
 
@@ -41,7 +41,7 @@ namespace TinifyAPI
             set
             {
                 appIdentifier = value;
-                client = null;
+                ResetClient();
             }
         }
 
@@ -55,8 +55,17 @@ namespace TinifyAPI
             set
             {
                 proxy = value;
-                client = null;
+                ResetClient();
             }
+        }
+
+        private static void ResetClient()
+        {
+            if (client != null)
+            {
+                client.Dispose();
+            }
+            client = null;
         }
 
         public static uint CompressionCount { get; set; }

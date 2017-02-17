@@ -13,7 +13,7 @@ namespace TinifyAPI
 {
     using Method = HttpMethod;
 
-    public class Client
+    public class Client : IDisposable
     {
         public static readonly Uri ApiEndpoint = new Uri("https://api.tinify.com");
 
@@ -161,6 +161,24 @@ namespace TinifyAPI
             }
 
             return null;
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                if (client != null)
+                {
+                    client.Dispose();
+                    client = null;
+                }
+            }
         }
     }
 }
