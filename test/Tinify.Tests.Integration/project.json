@@ -1,9 +1,6 @@
 ﻿{
   "supports": {},
-  "runtimes": {
-    "win7-x64": {},
-    "osx.10.12-x64": {}
-  },
+
   "testRunner": "nunit",
   "dependencies": {
     "NETStandard.Library": "1.6.1",
@@ -12,7 +9,18 @@
     "Tinify": "*"
   },
   "frameworks": {
-    "netcoreapp1.1": {}
+    "netcoreapp1.1": {
+      "dependencies": {
+        "Microsoft.NETCore.App": {
+          "type": "platform",
+          "version": "1.1.0"
+        }
+      },
+      "imports": [
+        "dnxcore50",
+        "portable-net45+win8"
+      ]
+    }
   },
   "buildOptions": {
     "copyToOutput": "examples/voormedia.png"
