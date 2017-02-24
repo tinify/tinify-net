@@ -148,7 +148,7 @@ namespace TinifyAPI
                         data
                     );
                 }
-                catch (JsonReaderException err)
+                catch (System.Exception err)
                 {
                     data = new {
                         message = "Error while parsing response: " + err.Message,
