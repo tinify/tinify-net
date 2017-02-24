@@ -1,8 +1,30 @@
 {
+  "name": "Tinify",
   "version": "1.0.0-alpha-*",
+  "title": ".NET client for the Tinify API",
+  "description": ".NET client for the Tinify API. Tinify compresses your images intelligently. Read more at https://tinify.com.",
+  "authors": ["Rolf Timmermans"],
+  "packOptions": {
+    "tags": [
+      "tinify",
+      "tinypng",
+      "tinyjpg",
+      "compress",
+      "images",
+      "api"
+    ],
+    "copyright": "Copyright (c) 2013-2017 Voormedia",
+    "projectUrl": "https://github.com/tinify/tinify-net",
+    "licenseUrl": "https://github.com/tinify/tinify-net/blob/master/LICENSE",
+    "iconUrl": "https://cdn.tinypng.com/images/apple-touch-icon.png",
+    "repository": {
+      "type": "git",
+      "url": "https://github.com/tinify/tinify-net.git"
+    }
+  },
   "supports": {},
   "buildOptions": {
-    "embed": [ "data/cacert.pem" ]
+    "embed": ["data/cacert.pem"]
   },
   "frameworks": {
     "netstandard1.3": {
