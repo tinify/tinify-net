@@ -1,7 +1,7 @@
 {
   "name": "Tinify",
   "version": "1.5.0",
-  "title": ".NET client for the Tinify API",
+  "title": "Tinify",
   "description": ".NET client for the Tinify API. Tinify compresses your images intelligently. Read more at https://tinify.com.",
   "authors": ["Tinify"],
   "packOptions": {
