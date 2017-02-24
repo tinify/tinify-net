@@ -36,7 +36,7 @@ class Compress
   static void Main()
   {
     Tinify.Key = "YOUR_API_KEY";
-    Tinify.FromFile("unoptimized.png").ToFile("optimized.png");
+    Tinify.FromFile("unoptimized.png").ToFile("optimized.png").Wait();
   }
 }
 ```
