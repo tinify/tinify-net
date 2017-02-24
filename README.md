@@ -1,4 +1,4 @@
-[<img src="https://travis-ci.org/tinify/tinify-dotnet.svg?branch=master" alt="Build Status">](https://travis-ci.org/tinify/tinify-dotnet)
+[<img src="https://ci.appveyor.com/api/projects/status/9g8hc7572vfaf9am/branch/master?svg=true" alt="Build Status">](https://ci.appveyor.com/project/Tinify/tinify-net)
 
 # Tinify API client for .NET
 
