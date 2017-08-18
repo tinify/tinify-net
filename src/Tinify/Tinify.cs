@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Net.Http;
 using System.Threading.Tasks;
 
@@ -68,7 +68,7 @@ namespace TinifyAPI
             client = null;
         }
 
-        public static uint CompressionCount { get; set; }
+        public static uint? CompressionCount { get; set; }
 
         public static Client Client
         {
