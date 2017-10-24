@@ -21,10 +21,6 @@ test: off
 nuget:
   disable_publish_on_pr: true
 
-artifacts:
-- path: artifacts\**\*.nupkg
-  name: NuGet
-
 deploy:
 - provider: NuGet
   name: ci
