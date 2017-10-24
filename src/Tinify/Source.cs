@@ -69,9 +69,14 @@ namespace TinifyAPI
 
         public async Task<Result> GetResult()
         {
-            var response = await Tinify.Client.Request(Method.Get, url, commands).ConfigureAwait(false);
-            var body = await response.Content.ReadAsByteArrayAsync().ConfigureAwait(false);
+            HttpResponseMessage response;
+            if (commands.Count == 0) {
+                response = await Tinify.Client.Request(Method.Get, url).ConfigureAwait(false);
+            } else {
+                response = await Tinify.Client.Request(Method.Post, url, commands).ConfigureAwait(false);
+            }
 
+            var body = await response.Content.ReadAsByteArrayAsync().ConfigureAwait(false);
             return new Result(response.Headers, response.Content.Headers, body);
         }
 
