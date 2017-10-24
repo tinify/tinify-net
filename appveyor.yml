@@ -22,7 +22,7 @@ nuget:
   disable_publish_on_pr: true
 
 artifacts:
-- path: artifacts\*.nupkg
+- path: src\Tinify\artifacts\*.nupkg
   name: NuGet
 
 deploy:
