@@ -3,10 +3,6 @@ version: '{build}'
 pull_requests:
   do_not_increment_build_number: true
 
-branches:
-  only:
-  - master
-
 image: Visual Studio 2017
 configuration: Release
 

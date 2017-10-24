@@ -5,7 +5,7 @@
     <AssemblyTitle>Tinify</AssemblyTitle>
     <VersionPrefix>1.5.1</VersionPrefix>
     <Authors>Tinify</Authors>
-    <TargetFramework>netstandard2.0</TargetFramework>
+    <TargetFramework>netstandard1.6</TargetFramework>
     <AssemblyName>Tinify</AssemblyName>
     <PackageId>Tinify</PackageId>
     <PackageTags>tinify;tinypng;tinyjpg;compress;images;api</PackageTags>
@@ -23,6 +23,10 @@
     <GenerateAssemblyCopyrightAttribute>false</GenerateAssemblyCopyrightAttribute>
     <GenerateNeutralResourcesLanguageAttribute>false</GenerateNeutralResourcesLanguageAttribute>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove=".DS_Store" />
+  </ItemGroup>
 
   <ItemGroup>
     <EmbeddedResource Include="data\cacert.pem" Exclude="bin\**;obj\**;**\*.xproj;packages\**;@(EmbeddedResource)" />

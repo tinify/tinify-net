@@ -12,7 +12,7 @@ namespace TinifyAPI
     {
         public static async Task<Source> FromFile(string path)
         {
-            using (var file = File.Open(path, FileMode.Open))
+            using (var file = File.Open(path, FileMode.Open, FileAccess.Read, FileShare.Read))
             using (var buffer = new MemoryStream())
             {
                 await file.CopyToAsync(buffer).ConfigureAwait(false);

@@ -1,7 +1,6 @@
 ﻿using NUnit.Framework;
 
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Net.Http;
@@ -52,7 +51,7 @@ namespace TinifyAPI.Tests
             Tinify.Key = "invalid";
             Helper.MockClient(Tinify.Client);
 
-            Helper.MockHandler.Expect("https://api.tinify.com/shrink").Respond(
+            Helper.MockHandler.When("https://api.tinify.com/shrink").Respond(
                 HttpStatusCode.Unauthorized,
                 new StringContent("{'error':'Unauthorized','message':'Credentials are invalid'}")
             );
@@ -96,14 +95,14 @@ namespace TinifyAPI.Tests
             Tinify.Key = "valid";
             Helper.MockClient(Tinify.Client);
 
-            Helper.MockHandler.Expect("https://api.tinify.com/shrink").Respond(req =>
+            Helper.MockHandler.When("https://api.tinify.com/shrink").Respond(req =>
             {
                 var res = new HttpResponseMessage(HttpStatusCode.Created);
                 res.Headers.Add("Location", "https://api.tinify.com/some/location");
                 return res;
             });
 
-            Helper.MockHandler.Expect("https://api.tinify.com/some/location").Respond(
+            Helper.MockHandler.When("https://api.tinify.com/some/location").Respond(
                 HttpStatusCode.OK,
                 new StringContent("compressed file")
             );
@@ -163,8 +162,8 @@ namespace TinifyAPI.Tests
         [Test]
         public void FromUrl_Should_ThrowException_IfRequestIsNotOk()
         {
-            Helper.MockHandler.ResetExpectations();
-            Helper.MockHandler.Expect("https://api.tinify.com/shrink").Respond(
+            Helper.MockHandler.ResetBackendDefinitions();
+            Helper.MockHandler.When("https://api.tinify.com/shrink").Respond(
                 HttpStatusCode.BadRequest,
                 new StringContent("{'error':'Source not found','message':'Cannot parse URL'}")
             );
