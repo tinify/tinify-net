@@ -1,37 +1,36 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{5879D56A-0A9B-4D7D-A964-D412BBA39CB4}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <RootNamespace>Tinify.Tests.Integration</RootNamespace>
+    <TargetFramework>netcoreapp2.0</TargetFramework>
     <AssemblyName>Tinify.Tests.Integration</AssemblyName>
-    <TargetFrameworkIdentifier>.NETCoreApp</TargetFrameworkIdentifier>
-    <TargetFrameworkVersion>v1.0</TargetFrameworkVersion>
-    <BaseIntermediateOutputPath>$(SolutionDir)\obj\</BaseIntermediateOutputPath>
-    <BaseOutputPath>$(SolutionDir)\bin\</BaseOutputPath>
+    <PackageId>Tinify.Tests.Integration</PackageId>
+    <GenerateRuntimeConfigurationFiles>true</GenerateRuntimeConfigurationFiles>
+    <NetStandardImplicitPackageVersion>1.6.1</NetStandardImplicitPackageVersion>
+    <RuntimeFrameworkVersion>2.0.0</RuntimeFrameworkVersion>
+    <GenerateAssemblyConfigurationAttribute>false</GenerateAssemblyConfigurationAttribute>
+    <GenerateAssemblyCompanyAttribute>false</GenerateAssemblyCompanyAttribute>
+    <GenerateAssemblyProductAttribute>false</GenerateAssemblyProductAttribute>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <DefineConstants>DEBUG;</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <OutputPath>$(BaseOutputPath)\Debug\</OutputPath>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <Optimize>true</Optimize>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <OutputPath>$(BaseOutputPath)\Release\</OutputPath>
-  </PropertyGroup>
+
   <ItemGroup>
-    <Compile Include="**\*.cs"/>
+    <None Remove=".DS_Store" />
+    <None Remove="examples\voormedia.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="project.json"/>
+    <ProjectReference Include="../../src/Tinify/Tinify.csproj" />
   </ItemGroup>
-  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
+
+  <ItemGroup>
+    <PackageReference Include="RichardSzalay.MockHttp" Version="3.2.1" />
+    <PackageReference Include="NUnit" Version="3.8.1" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.3.0" />
+    <PackageReference Include="NUnit3TestAdapter" Version="3.8.0" />
+    <PackageReference Include="NUnit.ConsoleRunner" Version="3.7.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="examples\voormedia.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
 </Project>

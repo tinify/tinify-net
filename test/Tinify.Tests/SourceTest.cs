@@ -63,7 +63,7 @@ namespace TinifyAPI.Tests
         {
             Assert.ThrowsAsync<AccountException>(async () =>
             {
-                await Source.FromFile("test/Tinify.Tests/examples/dummy.png");
+                await Source.FromFile(AppContext.BaseDirectory + "/examples/dummy.png");
             });
         }
 
@@ -113,7 +113,7 @@ namespace TinifyAPI.Tests
         public void FromFile_Should_ReturnSourceTask()
         {
             Assert.IsInstanceOf<Task<Source>>(
-                Source.FromFile("test/Tinify.Tests/examples/dummy.png")
+                Source.FromFile(AppContext.BaseDirectory + "/examples/dummy.png")
             );
         }
 
@@ -122,7 +122,7 @@ namespace TinifyAPI.Tests
         {
             Assert.AreEqual(
                 Encoding.ASCII.GetBytes("compressed file"),
-                Source.FromFile("test/Tinify.Tests/examples/dummy.png").ToBuffer().Result
+                Source.FromFile(AppContext.BaseDirectory + "/examples/dummy.png").ToBuffer().Result
             );
         }
 

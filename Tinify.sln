@@ -1,13 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.25420.1
+# Visual Studio 15
+VisualStudioVersion = 15.0.26114.2
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Tinify", "src\Tinify\Tinify.xproj", "{1994BC29-CB8D-4232-A203-E379FF44BFC5}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tinify", "src/Tinify/Tinify.csproj", "{1994BC29-CB8D-4232-A203-E379FF44BFC5}"
 EndProject
-Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Tinify.Tests", "test\Tinify.Tests\Tinify.Tests.xproj", "{E6666FF9-795C-494D-BB1D-386A51AAF716}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tinify.Tests", "test/Tinify.Tests/Tinify.Tests.csproj", "{E6666FF9-795C-494D-BB1D-386A51AAF716}"
 EndProject
-Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Tinify.Tests.Integration", "test\Tinify.Tests.Integration\Tinify.Tests.Integration.xproj", "{C40DC1BF-1B16-4EBA-B373-58994EBC6C07}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tinify.Tests.Integration", "test/Tinify.Tests.Integration/Tinify.Tests.Integration.csproj", "{C40DC1BF-1B16-4EBA-B373-58994EBC6C07}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".BuildingStuff", ".BuildingStuff", "{5E68512B-E096-427E-9B8C-C689175AC00C}"
 	ProjectSection(SolutionItems) = preProject

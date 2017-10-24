@@ -220,7 +220,7 @@ namespace TinifyAPI.Tests
         public void Should_ReturnSourceTask()
         {
             Assert.IsInstanceOf<Task<Source>>(
-                Tinify.FromFile("test/Tinify.Tests/examples/dummy.png")
+                Tinify.FromFile(AppContext.BaseDirectory + "/examples/dummy.png")
             );
         }
     }
