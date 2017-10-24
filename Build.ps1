@@ -18,7 +18,7 @@ function Exec
     }
 }
 
-if(Test-Path .\artifacts) { Remove-Item .\artifacts -Force -Recurse }
+if (Test-Path .\artifacts) { Remove-Item .\artifacts -Force -Recurse }
 
 exec { & dotnet restore }
 
@@ -29,10 +29,9 @@ exec { & dotnet test .\test\Tinify.Tests -c Release }
 # Only run integration tests if have a TINIFY_KEY environment key defined.
 # If we don't, we're on a Pull Request most likely
 
-if(Test-Path env:TINIFY_KEY)
+if (Test-Path env:TINIFY_KEY)
 {
     exec { & dotnet test .\test\Tinify.Tests.Integration -c Release }
 }
 
 exec { & dotnet pack .\src\Tinify -c Release -o .\artifacts }
-
