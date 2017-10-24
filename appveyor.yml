@@ -14,8 +14,8 @@ environment:
   TINIFY_KEY:
     secure: ZF/29NnonLrQuvAfRbhotwBPdrvQ+D+ayXVxWji8HaLYKSV2WH5kTDJSGSfB4j7S
 
-install:
-- set PATH=C:\Program Files (x86)\MSBuild\15.0\bin;%PATH%
+before_build:
+- which msbuild.exe
 
 build_script:
 - ps: .\Build.ps1
