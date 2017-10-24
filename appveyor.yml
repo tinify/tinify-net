@@ -3,10 +3,11 @@ version: '{build}'
 pull_requests:
   do_not_increment_build_number: true
 
-branches:  
+branches:
   only:
   - master
 
+image: Visual Studio 2017
 configuration: Release
 
 environment:
@@ -16,7 +17,7 @@ environment:
 build_script:
 - ps: .\Build.ps1
 
-test: off  
+test: off
 
 nuget:
   disable_publish_on_pr: true
