@@ -1,3 +1,6 @@
+## 1.5.2
+* Lower TargetFramework to 1.4 to support .NET Core 1.x.
+
 ## 1.5.1
 * Make Tinify.CompressionCount nullable, it is unset if no calls to the
   server have been made or if the server does not return a count.
