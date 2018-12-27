@@ -15,6 +15,7 @@ namespace TinifyAPI
         private static string key;
         private static string appIdentifier;
         private static string proxy;
+        private static bool validateServerCertificate = true;
 
         public static string Key
         {
@@ -58,6 +59,20 @@ namespace TinifyAPI
             }
         }
 
+        public static bool ValidateServerCertificate
+        {
+            get
+            {
+                return validateServerCertificate;
+            }
+
+            set
+            {
+                validateServerCertificate = value;
+                ResetClient();
+            }
+        }
+
         private static void ResetClient()
         {
             if (client != null)
@@ -88,7 +103,7 @@ namespace TinifyAPI
                     {
                         if (client == null)
                         {
-                            client = new Client(key, appIdentifier, proxy);
+                            client = new Client(key, appIdentifier, proxy, validateServerCertificate);
                         }
                     }
                     return client;

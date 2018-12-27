@@ -22,12 +22,14 @@ namespace TinifyAPI
 
         HttpClient client;
 
-        public Client(string key, string appIdentifier = null, string proxy = null)
+        public Client(string key, string appIdentifier = null, string proxy = null, bool validateServerCertificate = true)
         {
-            var handler = new HttpClientHandler()
+            var handler = new HttpClientHandler();
+
+            if (validateServerCertificate)
             {
-                ServerCertificateCustomValidationCallback = Internal.SSL.ValidationCallback
-            };
+                handler.ServerCertificateCustomValidationCallback = Internal.SSL.ValidationCallback;
+            }
 
             if (proxy != null)
             {
@@ -155,7 +157,7 @@ namespace TinifyAPI
                 }
 
                 if (retries > 0 && (uint) response.StatusCode >= 500) continue;
-                throw Exception.Create(data.message, data.error, (uint) response.StatusCode);
+                throw TinifyException.Create(data.message, data.error, (uint) response.StatusCode);
             }
 
             return null;

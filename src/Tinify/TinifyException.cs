@@ -1,7 +1,7 @@
 namespace TinifyAPI
 {
-    public class Exception : System.Exception {
-        internal static Exception Create(string message, string type, uint status) {
+    public class TinifyException : System.Exception {
+        internal static TinifyException Create(string message, string type, uint status) {
             if (status == 401 || status == 429)
             {
                 return new AccountException(message, type, status);
@@ -16,24 +16,24 @@ namespace TinifyAPI
             }
             else
             {
-                return new Exception(message, type, status);
+                return new TinifyException(message, type, status);
             }
         }
 
         public uint Status = 0;
 
-        internal Exception() : base() {}
+        internal TinifyException() : base() {}
 
-        internal Exception(string message, System.Exception err = null) : base(message, err) { }
+        internal TinifyException(string message, System.Exception err = null) : base(message, err) { }
 
-        internal Exception(string message, string type, uint status) :
+        internal TinifyException(string message, string type, uint status) :
             base(message + " (HTTP " + status + "/" + type + ")")
         {
             this.Status = status;
         }
     }
 
-    public class AccountException : Exception
+    public class AccountException : TinifyException
     {
         internal AccountException() : base() {}
 
@@ -42,7 +42,7 @@ namespace TinifyAPI
         internal AccountException(string message, string type, uint status) : base(message, type, status) { }
     }
 
-    public class ClientException : Exception
+    public class ClientException : TinifyException
     {
         internal ClientException() : base() {}
 
@@ -51,7 +51,7 @@ namespace TinifyAPI
         internal ClientException(string message, string type, uint status) : base(message, type, status) { }
     }
 
-    public class ServerException : Exception
+    public class ServerException : TinifyException
     {
         internal ServerException() : base() {}
 
@@ -60,7 +60,7 @@ namespace TinifyAPI
         internal ServerException(string message, string type, uint status) : base(message, type, status) { }
     }
 
-    public class ConnectionException : Exception
+    public class ConnectionException : TinifyException
     {
         internal ConnectionException() : base() {}
 
