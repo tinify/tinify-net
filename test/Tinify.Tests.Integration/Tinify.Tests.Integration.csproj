@@ -14,13 +14,18 @@
 
   <ItemGroup>
     <None Remove=".DS_Store" />
-    <None Remove="examples\voormedia.png" />
+    <None Remove=".env" />
+    <Content Include="examples\voormedia.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
+
   <ItemGroup>
     <ProjectReference Include="../../src/Tinify/Tinify.csproj" />
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="DotNetEnv" Version="1.4.0" />
     <PackageReference Include="RichardSzalay.MockHttp" Version="3.2.1" />
     <PackageReference Include="NUnit" Version="3.8.1" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.3.0" />
@@ -28,9 +33,9 @@
     <PackageReference Include="NUnit.ConsoleRunner" Version="3.7.0" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Content Include="examples\voormedia.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-  </ItemGroup>
+  <Target Name="CopyEnv" AfterTargets="AfterBuild">
+    <!-- Copy user's .env file if it exists -->
+    <Copy Condition="Exists('.env')" SourceFiles=".env" DestinationFolder="$(OutDir)" />
+  </Target>
+
 </Project>

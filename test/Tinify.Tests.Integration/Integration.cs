@@ -47,6 +47,9 @@ namespace TinifyAPI.Tests.Integration
         [OneTimeSetUp]
         public static void Init()
         {
+            var currDir = Directory.GetCurrentDirectory();
+            DotNetEnv.Env.Load();
+
             Tinify.Key = Environment.GetEnvironmentVariable("TINIFY_KEY");
             Tinify.Proxy = Environment.GetEnvironmentVariable("TINIFY_PROXY");
 
