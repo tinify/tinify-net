@@ -54,6 +54,10 @@ dotnet test test/Tinify.Tests
 dotnet restore
 TINIFY_KEY=$YOUR_API_KEY dotnet test test/Tinify.Tests.Integration
 ```
+Or add a `.env` file to the `/test/Tinify.Tests.Integration` directory in the format
+```
+TINIFY_KEY=<YOUR_API_KEY>
+```
 
 ## License
 
