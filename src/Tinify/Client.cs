@@ -155,7 +155,7 @@ namespace TinifyAPI
                 }
 
                 if (retries > 0 && (uint) response.StatusCode >= 500) continue;
-                throw Exception.Create(data.message, data.error, (uint) response.StatusCode);
+                throw TinifyException.Create(data.message, data.error, (uint) response.StatusCode);
             }
 
             return null;
