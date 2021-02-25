@@ -6,6 +6,7 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using TinifyAPI;
@@ -19,28 +20,32 @@ namespace TinifyClient
         {
             InitializeComponent();
         }
-        List<string> _files;
+        List<string> _files = new List<string>();
+        List<string> _largeFiles = new List<string>();
+        List<FileInfo> _fileinfoes = new List<FileInfo>();
+        private NetTraffic _netTraffic = new NetTraffic();
+        string _conversionLog;
+
         private void FormTinifyClient_Load(object sender, EventArgs e)
         {
-            //MessageBox.Show("hi rohan");
-            _files = new List<string>();
-            Tinify.Key = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxx";
-        }
+            _netTraffic.DataReceiving += _netTraffic_DataReceiving;
 
-        private async void button1_Click(object sender, EventArgs e)
+        }
+        private void _netTraffic_DataReceiving(object sender, List<NetTrafficEventArg> e)
         {
-            try
+            if (e.Count == 0) //no live network
             {
-                var imgPath = @"C:\Users\iqbal\Desktop\Image rnd\2000-4K-2\4k-3840-x-2160-wallpapers-themefoxx (366).jpg";
                 
-                var source = await Tinify.FromFile(imgPath);
-                await source.ToFile(imgPath + ".compressed.jpg");
-                MessageBox.Show("Done");
+                return;
+
             }
-            catch (Exception ex)
+
+            string msg = ""; // $"Down: {FileSizeFormatter.FormatSize(e[0].DownloadSpeed)}/S  , UP: {FileSizeFormatter.FormatSize(e[0].UploadSpeed)}/S";
+            foreach (NetTrafficEventArg arg in e)
             {
-                MessageBox.Show(ex.Message);
+                msg += $"Network: {arg.NetworkInterface.Name}:   Down: {FileSizeFormatter.FormatSize(arg.DownloadSpeed)}/s  , UP: {FileSizeFormatter.FormatSize(arg.UploadSpeed)}/s\r\n";
             }
+                lblNetSpeed.Text = msg;
         }
 
         private void btnSearch_Click(object sender, EventArgs e)
@@ -52,7 +57,7 @@ namespace TinifyClient
                     System.Windows.Forms.DialogResult result = dialog.ShowDialog();
                     txtFolderPath.Text = dialog.SelectedPath;
                     btnCalculate.Enabled = true;
-
+                    btnCalculate_Click(null, null);
                 }
 
             }
@@ -64,28 +69,133 @@ namespace TinifyClient
 
         private void btnCalculate_Click(object sender, EventArgs e)
         {
+            string msg = "";
             _files = new Utilities().GetAllImages(txtFolderPath.Text, true);
            
             lblInfo.Text = $"Total Files: {_files.Count}";
+            btnComAll.Enabled = _files.Count > 0;
+            //ShowMsg("Getting files info.....");
+            var totalFile = _files.Count;
+            long totalSize = 0;
+            long MAX_SIZE = 2005 * 1024 * 1024;//5MB//no from API
+            _fileinfoes = new List<FileInfo>();
+            foreach (string file in _files)
+            {
+                var fi = new FileInfo(file);
+                if (fi.Length > MAX_SIZE)
+                {
+                    _largeFiles.Add(file);
+                }
+                else
+                {
+                    _fileinfoes.Add(fi);
+                       totalSize += fi.Length;
+                }
+            }
+            msg = $"Total files {totalFile}, Total size {FileSizeFormatter.FormatSize(totalSize)}. Large files ( can't compress files) {_largeFiles.Count}";
+            lblSummary.Text = msg;
+
+            _fileinfoes = _fileinfoes.OrderByDescending(f => f.Length).ToList();
         }
 
         private async void btnComAll_Click(object sender, EventArgs e)
         {
+            string curFile = "";
+            _conversionLog ="SUCCESS_"+ DateTime.Now.ToString("yy.MM.dd.HH.mm.ss")+".log";
+            if (string.IsNullOrEmpty(txtAPIKEY.Text))
+            {
+                MessageBox.Show("Please give a API key.");
+                txtAPIKEY.Focus();
+                return;
+            }
+            Tinify.Key = txtAPIKEY.Text;
+            string msg = "";
 
+            await Task.Run(async () =>
+            {
+                try
+                {
+                    int count = 0;
+
+                    foreach (FileInfo fileInfo in _fileinfoes)
+                    {
+                        count++;
+
+                        msg = $"Compressing {count} of {_fileinfoes.Count}";
+                        ShowMsg(msg);
+                        var destPath = fileInfo.FullName.Replace(txtFolderPath.Text, txtDest.Text);
+
+                        var destpathforcheck = Path.GetDirectoryName(destPath);
+                        Utilities.CreateFolderIfNotExists(destpathforcheck);
+                        curFile = fileInfo.FullName;
+
+                        //File.Copy(fileInfo.FullName, destPath,true);// to check the logic work perfectly before go live
+                       
+                        var source = await Tinify.FromFile(fileInfo.FullName);
+                        await source.ToFile(destPath);
+                        File.AppendAllText(_conversionLog, fileInfo.FullName + "\r\n");
+                        if (chkMove.Checked)
+                        {
+                            var donePath = txtFolderPath.Text + "\\Completed"; 
+                            var doneFullPath = Path.GetDirectoryName(fileInfo.FullName.Replace(txtFolderPath.Text, donePath));
+                            Utilities.CreateFolderIfNotExists(doneFullPath);
+                            File.Move(fileInfo.FullName, doneFullPath+"\\"+ fileInfo.Name, true);
+                        }
+                        msg = $"{count} files are compressed of {_fileinfoes.Count} files. Remaining {_fileinfoes.Count - count} files ";
+                        ShowMsg(msg);
+                    }
+                    msg = $"{_fileinfoes.Count} files are compressed.";
+                    ShowMsg(msg);
+                    File.AppendAllText(_conversionLog, msg + "\r\n");
+                    MessageBox.Show("Done");
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message+"  \r\n"+ curFile);
+                }
+            });
+        }
+        private void ShowMsg(string msg)
+        {
+            this.InvokeOnUiThreadIfRequired(() =>
+            {
+                lblInfo.Text = msg;
+            });
+        }
+        //test a single file compression
+        private async void button1_Click(object sender, EventArgs e)
+        {
             try
             {
-                foreach (string file in _files)
-                { 
-                    var source = await Tinify.FromFile(file);
-                    await source.ToFile(file + $".compressed{Path.GetExtension(file)}");
-                }
+                Tinify.Key = txtAPIKEY.Text;
+
+                var imgPath = @"C:\Users\iqbal\Desktop\Image rnd\2000-4K-2\4k-3840-x-2160-wallpapers-themefoxx (366).jpg";
+
+                var source = await Tinify.FromFile(imgPath);
+                await source.ToFile(imgPath + ".compressed.jpg");
                 MessageBox.Show("Done");
             }
             catch (Exception ex)
             {
                 MessageBox.Show(ex.Message);
             }
+        }
 
+        private void btnDest_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                using (var dialog = new System.Windows.Forms.FolderBrowserDialog())
+                {
+                    System.Windows.Forms.DialogResult result = dialog.ShowDialog();
+                    txtDest.Text = dialog.SelectedPath; 
+                }
+
+            }
+            catch (Exception)
+            {
+
+            }
         }
     }
 }
