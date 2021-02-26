@@ -29,6 +29,7 @@ namespace TinifyClient
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.button1 = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
             this.txtFolderPath = new System.Windows.Forms.TextBox();
@@ -45,18 +46,22 @@ namespace TinifyClient
             this.btnDest = new System.Windows.Forms.Button();
             this.lblNetSpeed = new System.Windows.Forms.Label();
             this.chkMove = new System.Windows.Forms.CheckBox();
+            this.comboBox1 = new System.Windows.Forms.ComboBox();
+            this.lblres = new System.Windows.Forms.Label();
+            this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
+            this.checkBox1 = new System.Windows.Forms.CheckBox();
+            this.chkUseTinify = new System.Windows.Forms.CheckBox();
             this.SuspendLayout();
             // 
             // button1
             // 
             this.button1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.button1.Location = new System.Drawing.Point(797, 391);
+            this.button1.Location = new System.Drawing.Point(820, 426);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(167, 96);
             this.button1.TabIndex = 0;
             this.button1.Text = "Test Compress";
             this.button1.UseVisualStyleBackColor = true;
-            this.button1.Visible = false;
             this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
             // label1
@@ -74,13 +79,13 @@ namespace TinifyClient
             | System.Windows.Forms.AnchorStyles.Right)));
             this.txtFolderPath.Location = new System.Drawing.Point(13, 65);
             this.txtFolderPath.Name = "txtFolderPath";
-            this.txtFolderPath.Size = new System.Drawing.Size(810, 23);
+            this.txtFolderPath.Size = new System.Drawing.Size(1036, 23);
             this.txtFolderPath.TabIndex = 2;
             // 
             // btnSearch
             // 
             this.btnSearch.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnSearch.Location = new System.Drawing.Point(829, 65);
+            this.btnSearch.Location = new System.Drawing.Point(1055, 65);
             this.btnSearch.Name = "btnSearch";
             this.btnSearch.Size = new System.Drawing.Size(38, 23);
             this.btnSearch.TabIndex = 3;
@@ -101,7 +106,7 @@ namespace TinifyClient
             // 
             this.btnCalculate.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnCalculate.Enabled = false;
-            this.btnCalculate.Location = new System.Drawing.Point(752, 159);
+            this.btnCalculate.Location = new System.Drawing.Point(978, 159);
             this.btnCalculate.Name = "btnCalculate";
             this.btnCalculate.Size = new System.Drawing.Size(115, 23);
             this.btnCalculate.TabIndex = 5;
@@ -113,7 +118,7 @@ namespace TinifyClient
             // 
             this.btnComAll.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnComAll.Enabled = false;
-            this.btnComAll.Location = new System.Drawing.Point(752, 188);
+            this.btnComAll.Location = new System.Drawing.Point(978, 188);
             this.btnComAll.Name = "btnComAll";
             this.btnComAll.Size = new System.Drawing.Size(115, 23);
             this.btnComAll.TabIndex = 6;
@@ -161,7 +166,7 @@ namespace TinifyClient
             | System.Windows.Forms.AnchorStyles.Right)));
             this.txtDest.Location = new System.Drawing.Point(13, 112);
             this.txtDest.Name = "txtDest";
-            this.txtDest.Size = new System.Drawing.Size(810, 23);
+            this.txtDest.Size = new System.Drawing.Size(1036, 23);
             this.txtDest.TabIndex = 2;
             // 
             // lblSummary
@@ -176,7 +181,7 @@ namespace TinifyClient
             // btnDest
             // 
             this.btnDest.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnDest.Location = new System.Drawing.Point(829, 112);
+            this.btnDest.Location = new System.Drawing.Point(1055, 112);
             this.btnDest.Name = "btnDest";
             this.btnDest.Size = new System.Drawing.Size(38, 23);
             this.btnDest.TabIndex = 3;
@@ -188,7 +193,7 @@ namespace TinifyClient
             // 
             this.lblNetSpeed.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.lblNetSpeed.AutoSize = true;
-            this.lblNetSpeed.Location = new System.Drawing.Point(11, 229);
+            this.lblNetSpeed.Location = new System.Drawing.Point(11, 440);
             this.lblNetSpeed.Name = "lblNetSpeed";
             this.lblNetSpeed.Size = new System.Drawing.Size(15, 15);
             this.lblNetSpeed.TabIndex = 4;
@@ -204,11 +209,66 @@ namespace TinifyClient
             this.chkMove.Text = "Move source after compressed";
             this.chkMove.UseVisualStyleBackColor = true;
             // 
+            // comboBox1
+            // 
+            this.comboBox1.FormattingEnabled = true;
+            this.comboBox1.Items.AddRange(new object[] {
+            "1080px",
+            "960px",
+            "720px",
+            "640px",
+            "480px",
+            "240px"});
+            this.comboBox1.Location = new System.Drawing.Point(594, 20);
+            this.comboBox1.Name = "comboBox1";
+            this.comboBox1.Size = new System.Drawing.Size(121, 23);
+            this.comboBox1.TabIndex = 9;
+            this.comboBox1.SelectedIndexChanged += new System.EventHandler(this.comboBox1_SelectedIndexChanged);
+            // 
+            // lblres
+            // 
+            this.lblres.AutoSize = true;
+            this.lblres.Location = new System.Drawing.Point(486, 24);
+            this.lblres.Name = "lblres";
+            this.lblres.Size = new System.Drawing.Size(94, 15);
+            this.lblres.TabIndex = 1;
+            this.lblres.Text = "Max resolution?:";
+            this.toolTip1.SetToolTip(this.lblres, "if the resolution is greater than 1080px (FHD) then reduce it to 1080p then conve" +
+        "rt by tinypng.com\r\n");
+            // 
+            // checkBox1
+            // 
+            this.checkBox1.AutoSize = true;
+            this.checkBox1.Checked = true;
+            this.checkBox1.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.checkBox1.Enabled = false;
+            this.checkBox1.Location = new System.Drawing.Point(737, 25);
+            this.checkBox1.Name = "checkBox1";
+            this.checkBox1.Size = new System.Drawing.Size(116, 19);
+            this.checkBox1.TabIndex = 10;
+            this.checkBox1.Text = "Keep aspect ratio";
+            this.checkBox1.UseVisualStyleBackColor = true;
+            // 
+            // chkUseTinify
+            // 
+            this.chkUseTinify.AutoSize = true;
+            this.chkUseTinify.Checked = true;
+            this.chkUseTinify.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkUseTinify.Location = new System.Drawing.Point(884, 25);
+            this.chkUseTinify.Name = "chkUseTinify";
+            this.chkUseTinify.Size = new System.Drawing.Size(98, 19);
+            this.chkUseTinify.TabIndex = 11;
+            this.chkUseTinify.Text = "Use Tinify API";
+            this.chkUseTinify.UseVisualStyleBackColor = true;
+            // 
             // FormTinifyClient
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(872, 357);
+            this.ClientSize = new System.Drawing.Size(1098, 568);
+            this.Controls.Add(this.chkUseTinify);
+            this.Controls.Add(this.checkBox1);
+            this.Controls.Add(this.comboBox1);
             this.Controls.Add(this.chkMove);
             this.Controls.Add(this.btnSaveAPI);
             this.Controls.Add(this.btnComAll);
@@ -219,6 +279,7 @@ namespace TinifyClient
             this.Controls.Add(this.btnDest);
             this.Controls.Add(this.btnSearch);
             this.Controls.Add(this.txtAPIKEY);
+            this.Controls.Add(this.lblres);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.txtDest);
             this.Controls.Add(this.label3);
@@ -251,6 +312,11 @@ namespace TinifyClient
         private System.Windows.Forms.Button btnDest;
         private System.Windows.Forms.Label lblNetSpeed;
         private System.Windows.Forms.CheckBox chkMove;
+        private System.Windows.Forms.ComboBox comboBox1;
+        private System.Windows.Forms.Label lblres;
+        private System.Windows.Forms.ToolTip toolTip1;
+        private System.Windows.Forms.CheckBox checkBox1;
+        private System.Windows.Forms.CheckBox chkUseTinify;
     }
 }
 
