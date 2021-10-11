@@ -1,3 +1,6 @@
+## 1.5.3
+* Removed expired LetsEncrypt 'DST Root' from cabundle causing validation issues on older systems
+
 ## 1.5.2
 * Lower TargetFramework to 1.4 to support .NET Core 1.x.
 
