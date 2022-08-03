@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Text;
 using System.Threading.Tasks;
 using RichardSzalay.MockHttp;
 
@@ -66,7 +67,7 @@ namespace TinifyAPI.Tests
         public void Should_IssueRequest_WithoutBody_WhenOptionsAreEmpty()
         {
             var response = Subject.Request(HttpMethod.Post, "/shrink").Result;
-            Assert.AreEqual(null, response.Content);
+            Assert.IsInstanceOf(Helper.EmptyContentType, response.Content);
         }
 
         [Test]
@@ -190,7 +191,7 @@ namespace TinifyAPI.Tests
         public void Should_ReturnResponse()
         {
             var response = Subject.Request(HttpMethod.Post, "/shrink").Result;
-            Assert.AreEqual(null, response.Content);
+            Assert.IsInstanceOf(Helper.EmptyContentType, response.Content);
         }
     }
 
@@ -256,7 +257,7 @@ namespace TinifyAPI.Tests
         public void Should_ReturnResponse()
         {
             var response = Subject.Request(HttpMethod.Post, "/shrink").Result;
-            Assert.AreEqual(null, response.Content);
+            Assert.IsInstanceOf(Helper.EmptyContentType, response.Content);
         }
     }
 
@@ -322,7 +323,7 @@ namespace TinifyAPI.Tests
         public void Should_ReturnResponse()
         {
             var response = Subject.Request(HttpMethod.Post, "/shrink").Result;
-            Assert.AreEqual(null, response.Content);
+            Assert.IsInstanceOf(Helper.EmptyContentType, response.Content);
         }
     }
 
@@ -388,7 +389,7 @@ namespace TinifyAPI.Tests
         public void Should_ReturnResponse()
         {
             var response = Subject.Request(HttpMethod.Post, "/shrink").Result;
-            Assert.AreEqual(null, response.Content);
+            Assert.IsInstanceOf(Helper.EmptyContentType, response.Content);
         }
     }
 
@@ -454,7 +455,7 @@ namespace TinifyAPI.Tests
         public void Should_ReturnResponse()
         {
             var response = Subject.Request(HttpMethod.Post, "/shrink").Result;
-            Assert.AreEqual(null, response.Content);
+            Assert.IsInstanceOf(Helper.EmptyContentType, response.Content);
         }
     }
 

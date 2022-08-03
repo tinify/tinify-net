@@ -1,3 +1,4 @@
+using System;
 using System.Net;
 using System.Net.Http;
 using System.Reflection;
@@ -13,8 +14,7 @@ namespace TinifyAPI.Tests
         static FieldInfo httpHandlerField = typeof(HttpMessageInvoker)
             .GetField("_handler", BindingFlags.Instance | BindingFlags.NonPublic);
 
-        static FieldInfo retryDelayField = typeof(Client)
-            .GetField("RetryDelay", BindingFlags.Static | BindingFlags.Public);
+        public static Type EmptyContentType = typeof(HttpResponseMessage).Assembly.GetType("System.Net.Http.EmptyContent");
 
         public static MockHttpMessageHandler MockHandler;
         public static HttpRequestMessage LastRequest;
@@ -28,7 +28,7 @@ namespace TinifyAPI.Tests
             var client = (HttpClient) httpClientField.GetValue(test);
             httpHandlerField.SetValue(client, MockHandler);
 
-            retryDelayField.SetValue(null, (ushort) 10);
+            Client.RetryDelay = 10;
         }
 
         public static void EnqueuShrink(Client test)

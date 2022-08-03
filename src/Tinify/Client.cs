@@ -16,7 +16,7 @@ namespace TinifyAPI
         public static readonly Uri ApiEndpoint = new Uri("https://api.tinify.com");
 
         public static readonly ushort RetryCount = 1;
-        public static readonly ushort RetryDelay = 500;
+        public static ushort RetryDelay { get; internal set; }= 500;
 
         public static readonly string UserAgent = Internal.Platform.UserAgent;
 
