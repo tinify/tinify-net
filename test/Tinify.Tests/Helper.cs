@@ -14,7 +14,7 @@ namespace TinifyAPI.Tests
         static FieldInfo httpHandlerField = typeof(HttpMessageInvoker)
             .GetField("_handler", BindingFlags.Instance | BindingFlags.NonPublic);
 
-        public static Type EmptyContentType = typeof(HttpResponseMessage).Assembly.GetType("System.Net.Http.EmptyContent");
+        public static Type EmptyContentType = typeof(HttpContent).Assembly.GetType("System.Net.Http.EmptyContent");
 
         public static MockHttpMessageHandler MockHandler;
         public static HttpRequestMessage LastRequest;
