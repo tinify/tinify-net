@@ -1,36 +1,26 @@
-version: '{build}'
-
-pull_requests:
-  do_not_increment_build_number: true
-
-image: 'Visual Studio 2022'
-configuration: Release
-
-environment:
-  TINIFY_KEY:
-    secure: ZF/29NnonLrQuvAfRbhotwBPdrvQ+D+ayXVxWji8HaLYKSV2WH5kTDJSGSfB4j7S
-
-before_build:
-- which msbuild.exe
-
-build_script:
-- ps: .\Build.ps1
-
-test: off
-
+version: 2.0.{build}
+image: Visual Studio 2022
+dotnet_csproj:
+  patch: true
+  file: '**\*.csproj'
+  version: '{version}'
+  version_prefix: '{version}'
+  package_version: '{version}'
+  assembly_version: '{version}'
+  file_version: '{version}'
+  informational_version: '{version}'
 nuget:
   disable_publish_on_pr: true
+build:
+  publish_nuget: true
+  verbosity: normal
 
-artifacts:
-- path: src\Tinify\artifacts\*.nupkg
-  name: NuGet
-
-deploy:
-- provider: NuGet
-  name: production
-  api_key:
-    secure: ZhyqJwNBnwKrh2iknXgtLlSVWPhf8byfUdr1U8obUgxCr380nNJ8GHACRYwPP9kx
-  skip_symbols: false
-  on:
-    branch: master
-    appveyor_repo_tag: true
+#deploy:
+#- provider: NuGet
+#  name: production
+#  api_key:
+#    secure: ZhyqJwNBnwKrh2iknXgtLlSVWPhf8byfUdr1U8obUgxCr380nNJ8GHACRYwPP9kx
+#  skip_symbols: false
+#  on:
+#    branch: master
+#    appveyor_repo_tag: true

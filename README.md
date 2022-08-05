@@ -1,4 +1,4 @@
-[<img src="https://ci.appveyor.com/api/projects/status/9g8hc7572vfaf9am/branch/master?svg=true" alt="Build Status">](https://ci.appveyor.com/project/Tinify/tinify-net)
+[![Build status](https://ci.appveyor.com/api/projects/status/9pgat54tma1kdko8?svg=true)](https://ci.appveyor.com/project/jshergal/tinify-net-standard2-0)
 
 # Tinify API client for .NET
 
@@ -13,17 +13,7 @@
 Install the API client:
 
 ```
-Install-Package Tinify
-```
-
-Or add this to your `project.json`:
-
-```json
-{
-  "dependencies": {
-    "Tinify": "*",
-  }
-}
+Install-Package Tinify-netstandard20
 ```
 
 ## Usage
