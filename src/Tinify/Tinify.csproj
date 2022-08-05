@@ -2,18 +2,19 @@
 
   <PropertyGroup>
     <Description>.NET client for the Tinify API. Tinify compresses your images intelligently. Read more at https://tinify.com.</Description>
-    <AssemblyTitle>Tinify</AssemblyTitle>
-    <VersionPrefix>1.5.3</VersionPrefix>
-    <Authors>Tinify</Authors>
-    <TargetFramework>netstandard1.4</TargetFramework>
-    <AssemblyName>Tinify</AssemblyName>
-    <PackageId>Tinify</PackageId>
+    <AssemblyTitle>Tinify.Standard20</AssemblyTitle>
+    <VersionPrefix>2.0.1</VersionPrefix>
+    <Authors>Tinify,Jeff Shergalis</Authors>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <AssemblyName>Tinify.Standard20</AssemblyName>
+    <PackageId>Tinify-netstandard20</PackageId>
     <PackageTags>tinify;tinypng;tinyjpg;compress;images;api</PackageTags>
-    <PackageIconUrl>https://cdn.tinypng.com/images/apple-touch-icon.png</PackageIconUrl>
-    <PackageProjectUrl>https://github.com/tinify/tinify-net</PackageProjectUrl>
-    <PackageLicenseUrl>https://github.com/tinify/tinify-net/blob/master/LICENSE</PackageLicenseUrl>
+    <PackageIcon>tinifyicon.png</PackageIcon>
+    <PackageProjectUrl>https://github.com/jshergal/tinify-net</PackageProjectUrl>
+    <PackageLicenseFile>LICENSE</PackageLicenseFile>
+	<PackageReleaseNotes>$([System.IO.File]::ReadAllText("$(MSBuildProjectDirectory)/../../CHANGES.md"))</PackageReleaseNotes>
     <RepositoryType>git</RepositoryType>
-    <RepositoryUrl>https://github.com/tinify/tinify-net.git</RepositoryUrl>
+    <RepositoryUrl>https://github.com/jshergal/tinify-net.git</RepositoryUrl>
     <GenerateAssemblyTitleAttribute>false</GenerateAssemblyTitleAttribute>
     <GenerateAssemblyDescriptionAttribute>false</GenerateAssemblyDescriptionAttribute>
     <GenerateAssemblyConfigurationAttribute>false</GenerateAssemblyConfigurationAttribute>
@@ -25,10 +26,12 @@
 
   <ItemGroup>
     <None Remove=".DS_Store" />
+    <None Include="images/tinifyicon.png" Pack="true" PackagePath="\" />
+    <None Include="../../LICENSE" Pack="true" Visible="false" PackagePath="" />
   </ItemGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="data\cacert.pem" Exclude="bin\**;obj\**;**\*.xproj;packages\**;@(EmbeddedResource)" />
+    <EmbeddedResource Include="data/cacert.pem" Exclude="bin\**;obj\**;**\*.xproj;packages\**;@(EmbeddedResource)" />
   </ItemGroup>
 
   <ItemGroup>

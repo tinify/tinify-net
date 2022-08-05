@@ -1,3 +1,6 @@
+## 2.0.1
+* Set TargetFramework to netstandard2.0 to allow internal usage of newer language features.
+
 ## 1.5.3
 * Removed expired LetsEncrypt 'DST Root' from cabundle causing validation issues on older systems
 

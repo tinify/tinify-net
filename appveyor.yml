@@ -27,17 +27,10 @@ artifacts:
 
 deploy:
 - provider: NuGet
-  name: ci
-  server: https://www.myget.org/F/tinify/api/v2/package
-  api_key:
-    secure: gvEM4qNBNhsLu0cvJa+M3WJMNPBvCvEhYFc4xPWYfK7Ed1ouyH9B3uuMyQWeJ8bC
-  skip_symbols: true
-  on:
-    branch: master
-- provider: NuGet
   name: production
   api_key:
-    secure: Mjah+A6dZO+qTtBebeFB76vBD4jePJrmttEBKEjmYL3MsLRmljOedAMoP5Cc9TI3
+    secure: ZhyqJwNBnwKrh2iknXgtLlSVWPhf8byfUdr1U8obUgxCr380nNJ8GHACRYwPP9kx
+  skip_symbols: false
   on:
     branch: master
     appveyor_repo_tag: true

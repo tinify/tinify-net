@@ -18,7 +18,7 @@ function Exec
     }
 }
 
-if (Test-Path .\artifacts) { Remove-Item .\artifacts -Force -Recurse }
+if (Test-Path .\src\Tinify\artifacts) { Remove-Item .\src\Tinify\artifacts -Force -Recurse }
 
 exec { & dotnet restore }
 
@@ -34,4 +34,4 @@ if (Test-Path env:TINIFY_KEY)
     exec { & dotnet test .\test\Tinify.Tests.Integration -c Release }
 }
 
-exec { & dotnet pack .\src\Tinify -c Release -o .\artifacts }
+exec { & dotnet pack .\src\Tinify -c Release -o .\src\Tinify\artifacts }
