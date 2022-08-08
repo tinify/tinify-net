@@ -5,7 +5,8 @@
     <AssemblyTitle>Tinify.Standard20</AssemblyTitle>
     <VersionPrefix>2.0.1</VersionPrefix>
     <Authors>Tinify,Jeff Shergalis</Authors>
-    <TargetFramework>netstandard2.0</TargetFramework>
+    <TargetFramework>netstandard2.1</TargetFramework>
+    <LangVersion>9.0</LangVersion>
     <AssemblyName>Tinify.Standard20</AssemblyName>
     <PackageId>Tinify-netstandard20</PackageId>
     <PackageTags>tinify;tinypng;tinyjpg;compress;images;api</PackageTags>

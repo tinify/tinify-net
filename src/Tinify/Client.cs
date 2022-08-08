@@ -11,16 +11,16 @@ namespace TinifyAPI
 {
     using Method = HttpMethod;
 
-    public class Client : IDisposable
+    public sealed class Client : IDisposable
     {
         public static readonly Uri ApiEndpoint = new Uri("https://api.tinify.com");
 
-        public static readonly ushort RetryCount = 1;
+        public static readonly short RetryCount = 1;
         public static ushort RetryDelay { get; internal set; }= 500;
 
         public static readonly string UserAgent = Internal.Platform.UserAgent;
 
-        HttpClient client;
+        private readonly HttpClient _client;
 
         public Client(string key, string appIdentifier = null, string proxy = null)
         {
@@ -35,7 +35,7 @@ namespace TinifyAPI
                 handler.UseProxy = true;
             }
 
-            client = new HttpClient(handler)
+            _client = new HttpClient(handler)
             {
                 BaseAddress = ApiEndpoint,
                 Timeout = Timeout.InfiniteTimeSpan,
@@ -48,10 +48,10 @@ namespace TinifyAPI
                 userAgent = userAgent + " " + appIdentifier;
             }
 
-            client.DefaultRequestHeaders.Add("User-Agent", userAgent);
+            _client.DefaultRequestHeaders.Add("User-Agent", userAgent);
 
             var credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes("api:" + key));
-            client.DefaultRequestHeaders.Add("Authorization", "Basic " + credentials);
+            _client.DefaultRequestHeaders.Add("Authorization", "Basic " + credentials);
         }
 
         public Task<HttpResponseMessage> Request(Method method, string url)
@@ -105,7 +105,7 @@ namespace TinifyAPI
                 HttpResponseMessage response;
                 try
                 {
-                    response = await client.SendAsync(request).ConfigureAwait(false);
+                    response = await _client.SendAsync(request).ConfigureAwait(false);
                 }
                 catch (OperationCanceledException err)
                 {
@@ -163,20 +163,7 @@ namespace TinifyAPI
 
         public void Dispose()
         {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-
-        protected virtual void Dispose(bool disposing)
-        {
-            if (disposing)
-            {
-                if (client != null)
-                {
-                    client.Dispose();
-                    client = null;
-                }
-            }
+            _client?.Dispose();
         }
     }
 }
