@@ -1,35 +1,27 @@
 namespace TinifyAPI
 {
     public class TinifyException : System.Exception {
-        internal static TinifyException Create(string message, string type, uint status) {
-            if (status == 401 || status == 429)
+        internal static TinifyException Create(string message, string type, uint status)
+        {
+            return status switch
             {
-                return new AccountException(message, type, status);
-            }
-            else if (status >= 400 && status <= 499)
-            {
-                return new ClientException(message, type, status);
-            }
-            else if (status >= 500 && status <= 599)
-            {
-                return new ServerException(message, type, status);
-            }
-            else
-            {
-                return new TinifyException(message, type, status);
-            }
+                401 or 429 => new AccountException(message, type, status),
+                >= 400 and <= 499 => new ClientException(message, type, status),
+                >= 500 and <= 599 => new ServerException(message, type, status),
+                _ => new TinifyException(message, type, status)
+            };
         }
 
-        public uint Status = 0;
+        public uint Status;
 
-        internal TinifyException() : base() {}
+        internal TinifyException() {}
 
         internal TinifyException(string message, System.Exception err = null) : base(message, err) { }
 
         internal TinifyException(string message, string type, uint status) :
-            base(message + " (HTTP " + status + "/" + type + ")")
+            base($"{message} (HTTP {status}/{type})")
         {
-            this.Status = status;
+            Status = status;
         }
     }
 

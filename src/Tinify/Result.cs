@@ -6,56 +6,29 @@ namespace TinifyAPI
 {
     public class Result : ResultMeta
     {
-        protected HttpContentHeaders content;
-        protected byte[] data;
+        protected HttpContentHeaders Content;
+        protected byte[] Data;
 
         internal Result(HttpResponseHeaders meta, HttpContentHeaders content, byte[] data) : base(meta)
         {
-            this.content = content;
-            this.data = data;
+            Content = content;
+            Data = data;
         }
 
         public async Task ToFile(string path)
         {
-            using (var file = File.Create(path))
-            {
-                await file.WriteAsync(data, 0, data.Length).ConfigureAwait(false);
-            };
+            await File.WriteAllBytesAsync(path, Data).ConfigureAwait(false);
         }
 
         public byte[] ToBuffer()
         {
-            return data;
+            return Data;
         }
 
-        public ulong? Size
-        {
-            get
-            {
-                return (ulong?) this.content.ContentLength;
-            }
-        }
+        public ulong? Size => (ulong?) Content.ContentLength;
 
-        public string MediaType
-        {
-            get
-            {
-                var header = this.content.ContentType;
-                if (header == null)
-                {
-                    return null;
-                }
+        public string MediaType => Content.ContentType?.MediaType;
 
-                return header.MediaType;
-            }
-        }
-
-        public string ContentType
-        {
-            get
-            {
-                return MediaType;
-            }
-        }
+        public string ContentType => MediaType;
     }
 }

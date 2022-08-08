@@ -5,17 +5,16 @@ namespace TinifyAPI.Internal
 {
     internal class Proxy : IWebProxy
     {
-        Uri uri { get; set; }
+        private Uri Uri { get; }
 
         public ICredentials Credentials { get; set; }
 
         public Proxy(string url)
         {
-            Uri uri;
-            if (!Uri.TryCreate(url, UriKind.Absolute, out uri))
+            if (!Uri.TryCreate(url, UriKind.Absolute, out var uri))
             {
                 throw new ConnectionException(
-                    string.Format("Invalid proxy: cannot parse '{0}'", url)
+                    $"Invalid proxy: cannot parse '{url}'"
                 );
             }
 
@@ -24,11 +23,13 @@ namespace TinifyAPI.Internal
                 var user = uri.UserInfo.Split(':');
                 Credentials = new NetworkCredential(user[0], user[1]);
             }
+
+            Uri = uri;
         }
 
         public Uri GetProxy(Uri destination)
         {
-            return uri;
+            return Uri;
         }
 
         public bool IsBypassed(Uri host)

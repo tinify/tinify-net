@@ -8,10 +8,10 @@ namespace TinifyAPI.Tests
 {
     static class Helper
     {
-        static FieldInfo httpClientField = typeof(Client)
-            .GetField("client", BindingFlags.Instance | BindingFlags.NonPublic);
+        private static readonly FieldInfo HttpClientField = typeof(Client)
+            .GetField("_client", BindingFlags.Instance | BindingFlags.NonPublic);
 
-        static FieldInfo httpHandlerField = typeof(HttpMessageInvoker)
+        private static readonly FieldInfo HttpHandlerField = typeof(HttpMessageInvoker)
             .GetField("_handler", BindingFlags.Instance | BindingFlags.NonPublic);
 
         public static Type EmptyContentType = typeof(HttpContent).Assembly.GetType("System.Net.Http.EmptyContent");
@@ -25,8 +25,8 @@ namespace TinifyAPI.Tests
             MockHandler = new MockHttpMessageHandler();
 
             /* Terrible hack to get/mock/replace client property. */
-            var client = (HttpClient) httpClientField.GetValue(test);
-            httpHandlerField.SetValue(client, MockHandler);
+            var client = (HttpClient) HttpClientField.GetValue(test);
+            HttpHandlerField.SetValue(client, MockHandler);
 
             Client.RetryDelay = 10;
         }
@@ -53,7 +53,7 @@ namespace TinifyAPI.Tests
         {
             MockClient(test);
 
-            MockHandler.Expect("https://api.tinify.com/shrink").Respond(req =>
+            MockHandler.Expect("https://api.tinify.com/shrink").Respond(_ =>
             {
                 var res = new HttpResponseMessage(HttpStatusCode.Created);
                 res.Headers.Add("Location", "https://api.tinify.com/some/location");
@@ -78,7 +78,7 @@ namespace TinifyAPI.Tests
         {
             MockClient(test);
 
-            MockHandler.Expect("https://api.tinify.com/shrink").Respond(req =>
+            MockHandler.Expect("https://api.tinify.com/shrink").Respond(_ =>
             {
                 var res = new HttpResponseMessage(HttpStatusCode.Created);
                 res.Headers.Add("Location", "https://api.tinify.com/some/location");

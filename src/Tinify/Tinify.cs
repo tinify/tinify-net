@@ -9,62 +9,50 @@ namespace TinifyAPI
 
     public class Tinify
     {
-        private static object mutex = new object();
-        private static Client client;
+        private static readonly object Mutex = new();
+        private static Client _client;
 
-        private static string key;
-        private static string appIdentifier;
-        private static string proxy;
+        private static string _key;
+        private static string _appIdentifier;
+        private static string _proxy;
 
         public static string Key
         {
-            get
-            {
-                return key;
-            }
+            get => _key;
 
             set
             {
-                key = value;
+                _key = value;
                 ResetClient();
             }
         }
 
         public static string AppIdentifier
         {
-            get
-            {
-                return appIdentifier;
-            }
+            get => _appIdentifier;
 
             set
             {
-                appIdentifier = value;
+                _appIdentifier = value;
                 ResetClient();
             }
         }
 
         public static string Proxy
         {
-            get
-            {
-                return proxy;
-            }
+            get => _proxy;
 
             set
             {
-                proxy = value;
+                _proxy = value;
                 ResetClient();
             }
         }
 
         private static void ResetClient()
         {
-            if (client != null)
-            {
-                client.Dispose();
-            }
-            client = null;
+            _client?.Dispose();
+            _client = null;
         }
 
         public static uint? CompressionCount { get; set; }
@@ -73,25 +61,22 @@ namespace TinifyAPI
         {
             get
             {
-                if (key == null)
+                if (string.IsNullOrWhiteSpace(_key))
                 {
                     throw new AccountException("Provide an API key with Tinify.Key = ...");
                 }
 
-                if (client != null)
+                if (_client != null)
                 {
-                    return client;
+                    return _client;
                 }
                 else
                 {
-                    lock (mutex)
+                    lock (Mutex)
                     {
-                        if (client == null)
-                        {
-                            client = new Client(key, appIdentifier, proxy);
-                        }
+                        _client ??= new Client(_key, _appIdentifier, _proxy);
                     }
-                    return client;
+                    return _client;
                 }
             }
         }
@@ -123,7 +108,7 @@ namespace TinifyAPI
                 {
                     return true;
                 }
-                throw err;
+                throw;
             }
             catch (ClientException)
             {

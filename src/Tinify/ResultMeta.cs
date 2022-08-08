@@ -1,32 +1,29 @@
 using System;
-using System.Collections.Generic;
 using System.Net.Http.Headers;
 
 namespace TinifyAPI
 {
     public class ResultMeta
     {
-        protected HttpResponseHeaders meta;
+        protected HttpResponseHeaders Meta;
 
         internal ResultMeta(HttpResponseHeaders meta)
         {
-            this.meta = meta;
+            Meta = meta;
         }
 
         public uint? Width
         {
             get
             {
-                uint value;
-                IEnumerable<string> values;
-                if (!meta.TryGetValues("Image-Width", out values))
+                if (!Meta.TryGetValues("Image-Width", out var values))
                 {
                     return null;
                 }
 
                 foreach (var header in values)
                 {
-                    if (uint.TryParse(header, out value))
+                    if (uint.TryParse(header, out var value))
                     {
                         return value;
                     }
@@ -39,16 +36,14 @@ namespace TinifyAPI
         {
             get
             {
-                uint value;
-                IEnumerable<string> values;
-                if (!meta.TryGetValues("Image-Height", out values))
+                if (!Meta.TryGetValues("Image-Height", out var values))
                 {
                     return null;
                 }
 
                 foreach (var header in values)
                 {
-                    if (uint.TryParse(header, out value))
+                    if (uint.TryParse(header, out var value))
                     {
                         return value;
                     }
@@ -57,12 +52,6 @@ namespace TinifyAPI
             }
         }
 
-        public Uri Location
-        {
-            get
-            {
-                return meta.Location;
-            }
-        }
+        public Uri Location => Meta.Location;
     }
 }

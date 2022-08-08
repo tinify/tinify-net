@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <Description>.NET client for the Tinify API. Tinify compresses your images intelligently. Read more at https://tinify.com.</Description>
-    <AssemblyTitle>Tinify.Standard20</AssemblyTitle>
+    <AssemblyTitle>Tinify.Standard21</AssemblyTitle>
     <VersionPrefix>2.0.1</VersionPrefix>
     <Authors>Tinify,Jeff Shergalis</Authors>
     <TargetFramework>netstandard2.1</TargetFramework>
@@ -36,7 +36,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+    <PackageReference Include="System.Text.Json" Version="6.0.5" />
   </ItemGroup>
 
 </Project>

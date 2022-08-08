@@ -7,7 +7,7 @@ namespace TinifyAPI.Internal
 {
     internal static class Platform
     {
-        public static readonly string UserAgent = (GetClientVersion() + " " + GetFrameworkVersion()).Trim();
+        public static readonly string UserAgent = $"{GetClientVersion()} {GetFrameworkVersion()}".Trim();
         private static string GetOSPlatform()
         {
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows)) return "Windows";
@@ -57,6 +57,5 @@ namespace TinifyAPI.Internal
 
             return $"{name}/{version} ({os} {details})";
         }
-
     }
 }

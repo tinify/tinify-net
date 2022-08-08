@@ -1,9 +1,9 @@
-﻿using Newtonsoft.Json;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Text;
+using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -13,7 +13,13 @@ namespace TinifyAPI
 
     public sealed class Client : IDisposable
     {
-        public static readonly Uri ApiEndpoint = new Uri("https://api.tinify.com");
+        private sealed class ErrorData
+        {
+            public string message { get; set; }
+            public string error { get; set; }
+        }
+
+        public static readonly Uri ApiEndpoint = new("https://api.tinify.com");
 
         public static readonly short RetryCount = 1;
         public static ushort RetryDelay { get; internal set; }= 500;
@@ -71,7 +77,7 @@ namespace TinifyAPI
 
         public Task<HttpResponseMessage> Request(Method method, Uri url, byte[] body)
         {
-            return Request(method, url, new ByteArrayContent(body));
+            return Request(method, url, new ReadOnlyMemoryContent(body));
         }
 
         public Task<HttpResponseMessage> Request(Method method, Uri url, Dictionary<string, object> options)
@@ -80,17 +86,15 @@ namespace TinifyAPI
             {
                 return Request(method, url);
             }
-            else
-            {
-                var json = JsonConvert.SerializeObject(options);
-                var body = new StringContent(json, Encoding.UTF8, "application/json");
-                return Request(method, url, body);
-            }
+
+            var json = JsonSerializer.Serialize(options);
+            var body = new StringContent(json, Encoding.UTF8, "application/json");
+            return Request(method, url, body);
         }
 
         public async Task<HttpResponseMessage> Request(Method method, Uri url, HttpContent body = null)
         {
-            for (short retries = (short) RetryCount; retries >= 0; retries--)
+            for (var retries = RetryCount; retries >= 0; retries--)
             {
                 if (retries < RetryCount)
                 {
@@ -112,22 +116,22 @@ namespace TinifyAPI
                     if (retries > 0) continue;
                     throw new ConnectionException("Timeout while connecting", err);
                 }
-                catch (System.Exception err)
+                catch (Exception err)
                 {
+                    if (retries > 0) continue;
+
                     if (err.InnerException != null)
                     {
                         err = err.InnerException;
                     }
 
-                    if (retries > 0) continue;
                     throw new ConnectionException("Error while connecting: " + err.Message, err);
                 }
 
                 if (response.Headers.Contains("Compression-Count"))
                 {
                     var compressionCount = response.Headers.GetValues("Compression-Count").First();
-                    uint parsed;
-                    if (uint.TryParse(compressionCount, out parsed))
+                    if (uint.TryParse(compressionCount, out var parsed))
                     {
                         Tinify.CompressionCount = parsed;
                     }
@@ -138,24 +142,24 @@ namespace TinifyAPI
                     return response;
                 }
 
-                var data = new { message = "", error = "" };
+                if (retries > 0 && (uint)response.StatusCode >= 500) continue;
+
+                ErrorData data;
                 try
                 {
-                    data = JsonConvert.DeserializeAnonymousType(
-                        await response.Content.ReadAsStringAsync().ConfigureAwait(false),
-                        data
-                    );
+                    var content = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+                    data = JsonSerializer.Deserialize<ErrorData>(content) ??
+                           new ErrorData() {message = "Response content was empty.", error = "ParseError"};
                 }
-                catch (System.Exception err)
+                catch (Exception err)
                 {
-                    data = new {
+                    data = new ErrorData
+                    {
                         message = "Error while parsing response: " + err.Message,
                         error = "ParseError"
                     };
                 }
-
-                if (retries > 0 && (uint) response.StatusCode >= 500) continue;
-                throw TinifyException.Create(data.message, data.error, (uint) response.StatusCode);
+                throw TinifyException.Create(data.message, data.error, (uint)response.StatusCode);
             }
 
             return null;

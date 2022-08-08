@@ -488,9 +488,9 @@ namespace TinifyAPI.Tests
             });
 
             Assert.AreEqual(
-                "Error while parsing response: Unexpected character encountered while " +
-                "parsing value: <. Path '', line 0, position 0. (HTTP 543/ParseError)",
-                error.Message
+                "Error while parsing response: '<' is an invalid start of a value. Path: "+
+                "$ | LineNumber: 0 | BytePositionInLine: 0. (HTTP 543/ParseError)",
+                error?.Message
             );
         }
     }
