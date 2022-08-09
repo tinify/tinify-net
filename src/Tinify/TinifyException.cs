@@ -12,7 +12,7 @@ namespace TinifyAPI
             };
         }
 
-        public uint Status;
+        public uint Status { get; }
 
         internal TinifyException() {}
 

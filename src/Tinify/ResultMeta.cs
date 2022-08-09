@@ -5,7 +5,7 @@ namespace TinifyAPI
 {
     public class ResultMeta
     {
-        protected HttpResponseHeaders Meta;
+        protected HttpResponseHeaders Meta { get; set; }
 
         internal ResultMeta(HttpResponseHeaders meta)
         {

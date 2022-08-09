@@ -6,8 +6,8 @@ namespace TinifyAPI
 {
     public class Result : ResultMeta
     {
-        protected HttpContentHeaders Content;
-        protected byte[] Data;
+        protected HttpContentHeaders Content { get; set; }
+        protected byte[] Data { get; set; }
 
         internal Result(HttpResponseHeaders meta, HttpContentHeaders content, byte[] data) : base(meta)
         {
