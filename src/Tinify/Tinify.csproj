@@ -6,9 +6,12 @@
     <VersionPrefix>2.0.1</VersionPrefix>
     <Authors>Tinify,Jeff Shergalis</Authors>
     <TargetFramework>netstandard2.1</TargetFramework>
-    <LangVersion>9.0</LangVersion>
-    <AssemblyName>Tinify.Standard20</AssemblyName>
-    <PackageId>Tinify-netstandard20</PackageId>
+    <AssemblyName>Tinify.Standard21</AssemblyName>
+    <AssemblyTitle>Tinify.Standard21</AssemblyTitle>
+    <Product>Tinify</Product>
+    <Copyright>Copyright © 2017-2022</Copyright>
+
+<NeutralLanguage>en</NeutralLanguage>	      <PackageId>Tinify-netstandard21</PackageId>
     <PackageTags>tinify;tinypng;tinyjpg;compress;images;api</PackageTags>
     <PackageIcon>tinifyicon.png</PackageIcon>
     <PackageProjectUrl>https://github.com/jshergal/tinify-net</PackageProjectUrl>
@@ -16,15 +19,13 @@
 	<PackageReleaseNotes>$([System.IO.File]::ReadAllText("$(MSBuildProjectDirectory)/../../CHANGES.md"))</PackageReleaseNotes>
     <RepositoryType>git</RepositoryType>
     <RepositoryUrl>https://github.com/jshergal/tinify-net.git</RepositoryUrl>
-    <GenerateAssemblyTitleAttribute>false</GenerateAssemblyTitleAttribute>
-    <GenerateAssemblyDescriptionAttribute>false</GenerateAssemblyDescriptionAttribute>
-    <GenerateAssemblyConfigurationAttribute>false</GenerateAssemblyConfigurationAttribute>
-    <GenerateAssemblyCompanyAttribute>false</GenerateAssemblyCompanyAttribute>
-    <GenerateAssemblyProductAttribute>false</GenerateAssemblyProductAttribute>
-    <GenerateAssemblyCopyrightAttribute>false</GenerateAssemblyCopyrightAttribute>
-    <GenerateNeutralResourcesLanguageAttribute>false</GenerateNeutralResourcesLanguageAttribute>
+    <LangVersion>9.0</LangVersion>
   </PropertyGroup>
-
+	<ItemGroup>
+		<AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
+			<_Parameter1>Tinify.Tests</_Parameter1>
+		</AssemblyAttribute>
+	</ItemGroup>
   <ItemGroup>
     <None Remove=".DS_Store" />
     <None Include="images/tinifyicon.png" Pack="true" PackagePath="\" />

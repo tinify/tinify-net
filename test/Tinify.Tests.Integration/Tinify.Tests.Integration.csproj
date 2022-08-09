@@ -5,9 +5,7 @@
     <AssemblyName>Tinify.Tests.Integration</AssemblyName>
     <PackageId>Tinify.Tests.Integration</PackageId>
     <GenerateRuntimeConfigurationFiles>true</GenerateRuntimeConfigurationFiles>
-    <GenerateAssemblyConfigurationAttribute>false</GenerateAssemblyConfigurationAttribute>
-    <GenerateAssemblyCompanyAttribute>false</GenerateAssemblyCompanyAttribute>
-    <GenerateAssemblyProductAttribute>false</GenerateAssemblyProductAttribute>
+    <Product>Tinify.Tests.Integration</Product>
   </PropertyGroup>
 
   <ItemGroup>
