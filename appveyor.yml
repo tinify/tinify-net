@@ -9,20 +9,10 @@ dotnet_csproj:
   assembly_version: '{version}'
   file_version: '{version}'
   informational_version: '{version}'
-
-before_build:
-- which msbuild.exe
-
-build_script:
-- ps: .\Build.ps1
-
-test: off 
-
 nuget:
   disable_publish_on_pr: true
-build:
-  publish_nuget: true
-  verbosity: normal
+build_script:
+- ps: .\Build.ps1
 
 #deploy:
 #- provider: NuGet
