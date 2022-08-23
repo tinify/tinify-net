@@ -29,7 +29,7 @@ namespace TinifyAPI.Tests
             var client = Tinify.Client;
             Tinify.Key = "fghij";
 
-            Helper.EnqueuShrink(Tinify.Client);
+            Helper.EnqueueShrink(Tinify.Client);
             Tinify.Client.Request(HttpMethod.Get, "/shrink").Wait();
 
             Assert.AreEqual(
@@ -50,7 +50,7 @@ namespace TinifyAPI.Tests
             var client = Tinify.Client;
             Tinify.AppIdentifier = "MyApp/2.0";
 
-            Helper.EnqueuShrink(Tinify.Client);
+            Helper.EnqueueShrink(Tinify.Client);
             Tinify.Client.Request(HttpMethod.Get, "/shrink").Wait();
 
             Assert.AreEqual(
@@ -72,7 +72,7 @@ namespace TinifyAPI.Tests
             var client = Tinify.Client;
             Tinify.Proxy = "http://user:pass@localhost:8080";
 
-            Helper.EnqueuShrink(Tinify.Client);
+            Helper.EnqueueShrink(Tinify.Client);
             Tinify.Client.Request(HttpMethod.Get, "/shrink").Wait();
 
             Assert.AreEqual(

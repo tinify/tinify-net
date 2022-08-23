@@ -19,7 +19,7 @@ namespace TinifyAPI.Tests
         public void SetUp()
         {
             Subject = new Client(key);
-            Helper.EnqueuShrink(Subject);
+            Helper.EnqueueShrink(Subject);
         }
 
         [TearDown]
@@ -66,7 +66,7 @@ namespace TinifyAPI.Tests
         public void Should_IssueRequest_WithoutBody_WhenOptionsAreEmpty()
         {
             var response = Subject.Request(HttpMethod.Post, "/shrink").Result;
-            Assert.AreEqual(null, response.Content);
+            Helper.AssertEmptyResponseContent(response.Content);
         }
 
         [Test]
@@ -114,7 +114,7 @@ namespace TinifyAPI.Tests
         public void SetUp()
         {
             Subject = new Client(key, "TestApp/0.1");
-            Helper.EnqueuShrink(Subject);
+            Helper.EnqueueShrink(Subject);
         }
 
         [TearDown]
@@ -144,7 +144,7 @@ namespace TinifyAPI.Tests
         public void SetUp()
         {
             Subject = new Client(key, null, "http://user:pass@localhost:8080");
-            Helper.EnqueuShrink(Subject);
+            Helper.EnqueueShrink(Subject);
         }
 
         [TearDown]
@@ -190,7 +190,7 @@ namespace TinifyAPI.Tests
         public void Should_ReturnResponse()
         {
             var response = Subject.Request(HttpMethod.Post, "/shrink").Result;
-            Assert.AreEqual(null, response.Content);
+            Helper.AssertEmptyResponseContent(response.Content);
         }
     }
 
@@ -256,7 +256,7 @@ namespace TinifyAPI.Tests
         public void Should_ReturnResponse()
         {
             var response = Subject.Request(HttpMethod.Post, "/shrink").Result;
-            Assert.AreEqual(null, response.Content);
+            Helper.AssertEmptyResponseContent(response.Content);
         }
     }
 
@@ -322,7 +322,7 @@ namespace TinifyAPI.Tests
         public void Should_ReturnResponse()
         {
             var response = Subject.Request(HttpMethod.Post, "/shrink").Result;
-            Assert.AreEqual(null, response.Content);
+            Helper.AssertEmptyResponseContent(response.Content);
         }
     }
 
@@ -388,7 +388,7 @@ namespace TinifyAPI.Tests
         public void Should_ReturnResponse()
         {
             var response = Subject.Request(HttpMethod.Post, "/shrink").Result;
-            Assert.AreEqual(null, response.Content);
+            Helper.AssertEmptyResponseContent(response.Content);
         }
     }
 
@@ -454,7 +454,7 @@ namespace TinifyAPI.Tests
         public void Should_ReturnResponse()
         {
             var response = Subject.Request(HttpMethod.Post, "/shrink").Result;
-            Assert.AreEqual(null, response.Content);
+            Helper.AssertEmptyResponseContent(response.Content);
         }
     }
 
@@ -489,9 +489,9 @@ namespace TinifyAPI.Tests
             });
 
             Assert.AreEqual(
-                "Error while parsing response: Unexpected character encountered while " +
-                "parsing value: <. Path '', line 0, position 0. (HTTP 543/ParseError)",
-                error.Message
+                "Error while parsing response: '<' is an invalid start of a value. Path: "+
+                "$ | LineNumber: 0 | BytePositionInLine: 0. (HTTP 543/ParseError)",
+                error?.Message
             );
         }
     }

@@ -14,7 +14,7 @@ namespace TinifyAPI
 
     public sealed class Client : IDisposable
     {
-        private sealed class ErrorData
+        internal sealed class ErrorData
         {
             [JsonPropertyName("message")]
             public string Message { get; init; }
@@ -22,7 +22,7 @@ namespace TinifyAPI
             public string Error { get; init; }
         }
 
-        public static readonly Uri ApiEndpoint = new Uri("https://api.tinify.com");
+        public static readonly Uri ApiEndpoint = new("https://api.tinify.com");
 
         public static readonly short RetryCount = 1;
         public static ushort RetryDelay { get; internal set; }= 500;
@@ -152,17 +152,17 @@ namespace TinifyAPI
                 {
                     var content = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
                     data = JsonSerializer.Deserialize<ErrorData>(content) ??
-                           new ErrorData() {message = "Response content was empty.", error = "ParseError"};
+                           new ErrorData() {Message = "Response content was empty.", Error = "ParseError"};
                 }
                 catch (Exception err)
                 {
                     data = new ErrorData
                     {
-                        message = "Error while parsing response: " + err.Message,
-                        error = "ParseError"
+                        Message = "Error while parsing response: " + err.Message,
+                        Error = "ParseError"
                     };
                 }
-                throw TinifyException.Create(data.message, data.error, (uint)response.StatusCode);
+                throw TinifyException.Create(data.Message, data.Error, (uint)response.StatusCode);
             }
 
             return null;
