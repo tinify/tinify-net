@@ -1,4 +1,4 @@
-![CI_CD](https://github.com/jshergal/tinify-net/actions/workflows/ci-cd.yml/badge.svg)
+[![CI_CD](https://github.com/jshergal/tinify-net/actions/workflows/ci-cd.yml/badge.svg)](https://github.com/jshergal/tinify-net/actions/workflows/ci-cd.yml)  
 
 # Tinify API client for .NET
 
