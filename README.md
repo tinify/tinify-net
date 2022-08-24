@@ -1,4 +1,5 @@
-[<img src="https://ci.appveyor.com/api/projects/status/9g8hc7572vfaf9am/branch/master?svg=true" alt="Build Status">](https://ci.appveyor.com/project/Tinify/tinify-net)
+https://github.com/jshergal/tinify-net/actions/workflows/CI_CD/badge.svg
+![CI/CD](https://github.com/jshergal/tinify-net/actions/workflows/CI_CD/badge.svg)
 
 # Tinify API client for .NET
 
