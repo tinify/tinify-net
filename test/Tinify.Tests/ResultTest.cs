@@ -1,6 +1,7 @@
 ﻿using NUnit.Framework;
 using System.Net.Http;
 using System.Text;
+// ReSharper disable InconsistentNaming
 
 namespace TinifyAPI.Tests
 {

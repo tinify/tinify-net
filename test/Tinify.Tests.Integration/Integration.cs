@@ -12,6 +12,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using MetadataDirectory = MetadataExtractor.Directory;
+// ReSharper disable InconsistentNaming
 
 namespace TinifyAPI.Tests.Integration
 {
@@ -37,7 +38,15 @@ namespace TinifyAPI.Tests.Integration
         private void Dispose(bool disposing)
         {
             if (disposing) GC.SuppressFinalize(this);
-            try { File.Delete(Path); } catch { }
+            try
+            {
+                if (!string.IsNullOrWhiteSpace(Path)) File.Delete(Path);
+            }
+            catch
+            {
+                // ignored
+            }
+
             Path = null;
         }
     }
@@ -205,7 +214,7 @@ namespace TinifyAPI.Tests.Integration
         {
             using (var file = new TempFile())
             {
-                var options = new string[] {"copyright", "location"};
+                var options = new[] {"copyright", "location"};
                 optimized.Preserve(options).ToFile(file.Path).Wait();
 
                 var size = new FileInfo(file.Path).Length;
@@ -226,7 +235,7 @@ namespace TinifyAPI.Tests.Integration
         {
             using var file = new TempFile();
             var resizeOptions = new { method = "fit", width = 50, height = 20 };
-            var preserveOptions = new string[] { "copyright", "location" };
+            var preserveOptions = new[] { "copyright", "location" };
             optimized.Resize(resizeOptions).Preserve(preserveOptions).ToFile(file.Path).Wait();
 
             var size = new FileInfo(file.Path).Length;

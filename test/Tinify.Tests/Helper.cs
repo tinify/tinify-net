@@ -1,9 +1,8 @@
-using System;
+using NUnit.Framework;
+using RichardSzalay.MockHttp;
 using System.Net;
 using System.Net.Http;
 using System.Reflection;
-using NUnit.Framework;
-using RichardSzalay.MockHttp;
 
 namespace TinifyAPI.Tests
 {
@@ -49,7 +48,7 @@ namespace TinifyAPI.Tests
             });
         }
 
-        public static void EnqueuShrinkAndResult(Client test, string body)
+        public static void EnqueueShrinkAndResult(Client test, string body)
         {
             MockClient(test);
 
@@ -104,7 +103,7 @@ namespace TinifyAPI.Tests
         // Helper method added due to a behavior change in .Net 6.0 where instead of returning null,
         // HttpContent will be of type EmptyContentType
 #if NET6_0_OR_GREATER
-        private static readonly Type EmptyContentType = typeof(HttpContent).Assembly.GetType("System.Net.Http.EmptyContent");
+        private static readonly System.Type EmptyContentType = typeof(HttpContent).Assembly.GetType("System.Net.Http.EmptyContent");
 
         public static void AssertEmptyResponseContent(HttpContent content) => Assert.IsInstanceOf(EmptyContentType, content);
 #else

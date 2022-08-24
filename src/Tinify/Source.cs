@@ -9,16 +9,12 @@ namespace TinifyAPI
 {
     using Method = HttpMethod;
 
-    public class Source
+    public sealed class Source
     {
         public static async Task<Source> FromFile(string path)
         {
-            using (var file = File.Open(path, FileMode.Open, FileAccess.Read, FileShare.Read))
-            using (var buffer = new MemoryStream())
-            {
-                await file.CopyToAsync(buffer).ConfigureAwait(false);
-                return await FromBuffer(buffer.ToArray()).ConfigureAwait(false);
-            }
+            var buffer = await Task.Run(() => File.ReadAllBytes(path)).ConfigureAwait(false);
+            return await FromBuffer(buffer).ConfigureAwait(false);
         }
 
         public static async Task<Source> FromBuffer(byte[] buffer)
@@ -31,8 +27,7 @@ namespace TinifyAPI
 
         public static async Task<Source> FromUrl(string url)
         {
-            var body = new Dictionary<string, object>();
-            body.Add("source", new { url = url });
+            var body = new Dictionary<string, object> {{"source", new { url = url }}};
 
             var response = await Tinify.Client.Request(Method.Post, "/shrink", body).ConfigureAwait(false);
             var location = response.Headers.Location;
@@ -40,29 +35,37 @@ namespace TinifyAPI
             return new Source(location);
         }
 
-        Uri url;
-        Dictionary<string, object> commands;
+        private readonly Uri _url;
+        private readonly Dictionary<string, object> _commands;
 
         internal Source(Uri url, Dictionary<string, object> commands = null)
         {
-            this.url = url;
-            if (commands == null) commands = new Dictionary<string, object>();
-            this.commands = commands;
+            _url = url;
+            commands ??= new Dictionary<string, object>();
+            _commands = commands;
         }
 
         public Source Preserve(params string[] options)
         {
-            return new Source(url, mergeCommands("preserve", options));
+            return new Source(_url, MergeCommands("preserve", options));
         }
 
         public Source Resize(object options)
         {
-            return new Source(url, mergeCommands("resize", options));
+            return new Source(_url, MergeCommands("resize", options));
+        }
+
+        public async Task<ResultMeta> Store(object options)
+        {
+            var response = await Tinify.Client.Request(Method.Post, _url,
+                MergeCommands("store", options)).ConfigureAwait(false);
+
+            return new ResultMeta(response.Headers);
         }
 
         public Source Transcode(params string[] targetImageMimeTypes)
         {
-            return new Source(url, mergeCommands("type", targetImageMimeTypes));
+            return new Source(_url, MergeCommands("type", targetImageMimeTypes));
         }
 
         public Source Transform(Color backgroundColor)
@@ -75,24 +78,16 @@ namespace TinifyAPI
 
         public Source Transform(string backgroundColor)
         {
-            return new Source(url, mergeCommands("transform", new { background = backgroundColor }));
-        }
-
-        public async Task<ResultMeta> Store(object options)
-        {
-            var commands = mergeCommands("store", options);
-            var response = await Tinify.Client.Request(Method.Post, url, commands).ConfigureAwait(false);
-
-            return new ResultMeta(response.Headers);
+            return new Source(_url, MergeCommands("transform", new { background = backgroundColor }));
         }
 
         public async Task<Result> GetResult()
         {
             HttpResponseMessage response;
-            if (commands.Count == 0) {
-                response = await Tinify.Client.Request(Method.Get, url).ConfigureAwait(false);
+            if (_commands.Count == 0) {
+                response = await Tinify.Client.Request(Method.Get, _url).ConfigureAwait(false);
             } else {
-                response = await Tinify.Client.Request(Method.Post, url, commands).ConfigureAwait(false);
+                response = await Tinify.Client.Request(Method.Post, _url, _commands).ConfigureAwait(false);
             }
 
             var body = await response.Content.ReadAsByteArrayAsync().ConfigureAwait(false);
@@ -107,11 +102,9 @@ namespace TinifyAPI
             return await GetResult().ToBuffer().ConfigureAwait(false);
         }
 
-        private Dictionary<string, object> mergeCommands(string key, object options)
+        private Dictionary<string, object> MergeCommands(string key, object options)
         {
-            var commands = new Dictionary<string, object>(this.commands);
-            commands.Add(key, options);
-            return commands;
+            return new Dictionary<string, object>(this._commands) {{key, options}};
         }
     }
 }

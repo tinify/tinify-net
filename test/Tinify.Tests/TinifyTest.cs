@@ -6,6 +6,7 @@ using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using RichardSzalay.MockHttp;
+// ReSharper disable InconsistentNaming
 
 namespace TinifyAPI.Tests
 {
@@ -26,7 +27,7 @@ namespace TinifyAPI.Tests
         public void Should_ResetClient_WithNewKey()
         {
             Tinify.Key = "abcde";
-            var client = Tinify.Client;
+            var _ = Tinify.Client;
             Tinify.Key = "fghij";
 
             Helper.EnqueueShrink(Tinify.Client);
@@ -47,7 +48,7 @@ namespace TinifyAPI.Tests
         {
             Tinify.Key = "abcde";
             Tinify.AppIdentifier = "MyApp/1.0";
-            var client = Tinify.Client;
+            var _ = Tinify.Client;
             Tinify.AppIdentifier = "MyApp/2.0";
 
             Helper.EnqueueShrink(Tinify.Client);
@@ -69,7 +70,7 @@ namespace TinifyAPI.Tests
         {
             Tinify.Key = "abcde";
             Tinify.Proxy = "http://localhost";
-            var client = Tinify.Client;
+            var _ = Tinify.Client;
             Tinify.Proxy = "http://user:pass@localhost:8080";
 
             Helper.EnqueueShrink(Tinify.Client);
@@ -97,12 +98,12 @@ namespace TinifyAPI.Tests
         {
             var error = Assert.Throws<AccountException>(() =>
             {
-                var client = Tinify.Client;
+                var _ = Tinify.Client;
             });
 
             Assert.AreEqual(
                 "Provide an API key with Tinify.Key = ...",
-                error.Message
+                error?.Message
             );
         }
 
@@ -113,12 +114,12 @@ namespace TinifyAPI.Tests
             Tinify.Proxy = "http-bad-url";
             var error = Assert.Throws<ConnectionException>(() =>
             {
-                var client = Tinify.Client;
+                var _ = Tinify.Client;
             });
 
             Assert.AreEqual(
                 "Invalid proxy: cannot parse 'http-bad-url'",
-                error.Message
+                error?.Message
             );
         }
     }

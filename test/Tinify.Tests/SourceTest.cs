@@ -8,21 +8,17 @@ using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using RichardSzalay.MockHttp;
+// ReSharper disable InconsistentNaming
 
 namespace TinifyAPI.Tests
 {
-    sealed class TempFile : IDisposable
+    internal sealed class TempFile : IDisposable
     {
-        private string path;
-
-        public string Path
-        {
-            get { return path; }
-        }
+        public string Path { get; private set; }
 
         public TempFile()
         {
-            path = System.IO.Path.GetTempFileName();
+            Path = System.IO.Path.GetTempFileName();
         }
 
         ~TempFile()
@@ -38,8 +34,16 @@ namespace TinifyAPI.Tests
         private void Dispose(bool disposing)
         {
             if (disposing) GC.SuppressFinalize(this);
-            try { File.Delete(path); } catch { }
-            path = null;
+            try
+            {
+                if (!string.IsNullOrEmpty(Path)) File.Delete(Path);
+            }
+            catch
+            {
+                // ignored
+            }
+
+            Path = null;
         }
     }
 
@@ -196,7 +200,7 @@ namespace TinifyAPI.Tests
         [Test]
         public void Preserve_Should_ReturnSourceTask_WithData()
         {
-            Helper.EnqueuShrinkAndResult(Tinify.Client, "copyrighted file");
+            Helper.EnqueueShrinkAndResult(Tinify.Client, "copyrighted file");
 
             var buffer = Encoding.ASCII.GetBytes("png file");
             Assert.AreEqual(
@@ -213,7 +217,7 @@ namespace TinifyAPI.Tests
         [Test]
         public void Preserve_Should_ReturnSourceTask_WithData_ForArray()
         {
-            Helper.EnqueuShrinkAndResult(Tinify.Client, "copyrighted file");
+            Helper.EnqueueShrinkAndResult(Tinify.Client, "copyrighted file");
 
             var buffer = Encoding.ASCII.GetBytes("png file");
             Assert.AreEqual(
@@ -230,10 +234,10 @@ namespace TinifyAPI.Tests
         [Test]
         public void Preserve_Should_IncludeOtherOptions_IfSet()
         {
-            Helper.EnqueuShrinkAndResult(Tinify.Client, "copyrighted resized file");
+            Helper.EnqueueShrinkAndResult(Tinify.Client, "copyrighted resized file");
 
             var resizeOptions = new { width = 100, height = 60 };
-            var preserveOptions = new string[] {"copyright", "location"};
+            var preserveOptions = new[] {"copyright", "location"};
 
             var buffer = Encoding.ASCII.GetBytes("png file");
             Assert.AreEqual(
@@ -259,7 +263,7 @@ namespace TinifyAPI.Tests
         [Test]
         public void Resize_Should_ReturnSourceTask_WithData()
         {
-            Helper.EnqueuShrinkAndResult(Tinify.Client, "small file");
+            Helper.EnqueueShrinkAndResult(Tinify.Client, "small file");
 
             var buffer = Encoding.ASCII.GetBytes("png file");
             Assert.AreEqual(
@@ -319,7 +323,7 @@ namespace TinifyAPI.Tests
         [Test]
         public void ToBuffer_Should_ReturnImageData()
         {
-            Helper.EnqueuShrinkAndResult(Tinify.Client, "compressed file");
+            Helper.EnqueueShrinkAndResult(Tinify.Client, "compressed file");
 
             var buffer = Encoding.ASCII.GetBytes("png file");
             Assert.AreEqual(
@@ -331,7 +335,7 @@ namespace TinifyAPI.Tests
         [Test]
         public void ToFile_Should_StoreImageData()
         {
-            Helper.EnqueuShrinkAndResult(Tinify.Client, "compressed file");
+            Helper.EnqueueShrinkAndResult(Tinify.Client, "compressed file");
 
             var buffer = Encoding.ASCII.GetBytes("png file");
             using (var file = new TempFile())
@@ -356,7 +360,7 @@ namespace TinifyAPI.Tests
         [Test]
         public void Transform_Should_ReturnSourceTask_WithData()
         {
-            Helper.EnqueuShrinkAndResult(Tinify.Client, "transformed file");
+            Helper.EnqueueShrinkAndResult(Tinify.Client, "transformed file");
 
             var buffer = Encoding.ASCII.GetBytes("png file");
             Assert.AreEqual(
@@ -381,7 +385,7 @@ namespace TinifyAPI.Tests
         [Test]
         public void Transcode_Should_ReturnSourceTask_WithData()
         {
-            Helper.EnqueuShrinkAndResult(Tinify.Client, "transcoded file");
+            Helper.EnqueueShrinkAndResult(Tinify.Client, "transcoded file");
             var buffer = Encoding.ASCII.GetBytes("png file");
             Assert.AreEqual(
                 Encoding.ASCII.GetBytes("transcoded file"),

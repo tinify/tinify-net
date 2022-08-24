@@ -6,6 +6,7 @@ using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using RichardSzalay.MockHttp;
+// ReSharper disable InconsistentNaming
 
 namespace TinifyAPI.Tests
 {
@@ -13,7 +14,7 @@ namespace TinifyAPI.Tests
     public class Client_Request_WhenValid
     {
         public Client Subject { get; set; }
-        string key = "key";
+        private const string key = "key";
 
         [SetUp]
         public void SetUp()
@@ -108,7 +109,7 @@ namespace TinifyAPI.Tests
     public class Client_Request_WhenValid_WithAppId
     {
         public Client Subject { get; set; }
-        string key = "key";
+        private const string key = "key";
 
         [SetUp]
         public void SetUp()
@@ -138,7 +139,7 @@ namespace TinifyAPI.Tests
     public class Client_Request_WhenValid_WithProxy
     {
         public Client Subject { get; set; }
-        string key = "key";
+        private const string key = "key";
 
         [SetUp]
         public void SetUp()
@@ -169,7 +170,7 @@ namespace TinifyAPI.Tests
     public class Client_Request_WithTimeout_Once
     {
         public Client Subject { get; set; }
-        string key = "key";
+        private const string key = "key";
 
         [SetUp]
         public void SetUp()
@@ -198,7 +199,7 @@ namespace TinifyAPI.Tests
     public class Client_Request_WithTimeout_Repeatedly
     {
         public Client Subject { get; set; }
-        string key = "key";
+        private const string key = "key";
 
         [SetUp]
         public void SetUp()
@@ -226,7 +227,7 @@ namespace TinifyAPI.Tests
 
             Assert.AreEqual(
                 "Timeout while connecting",
-                error.Message
+                error?.Message
             );
         }
     }
@@ -235,7 +236,7 @@ namespace TinifyAPI.Tests
     public class Client_Request_WithSocketError_Once
     {
         public Client Subject { get; set; }
-        string key = "key";
+        private const string key = "key";
 
         [SetUp]
         public void SetUp()
@@ -264,7 +265,7 @@ namespace TinifyAPI.Tests
     public class Client_Request_WithSocketError_Repeatedly
     {
         public Client Subject { get; set; }
-        string key = "key";
+        private const string key = "key";
 
         [SetUp]
         public void SetUp()
@@ -292,7 +293,7 @@ namespace TinifyAPI.Tests
 
             Assert.AreEqual(
                 "Error while connecting: An error occurred while sending the request",
-                error.Message
+                error?.Message
             );
         }
     }
@@ -301,7 +302,7 @@ namespace TinifyAPI.Tests
     public class Client_Request_WithUnexpectedError_Once
     {
         public Client Subject { get; set; }
-        string key = "key";
+        private const string key = "key";
 
         [SetUp]
         public void SetUp()
@@ -330,7 +331,7 @@ namespace TinifyAPI.Tests
     public class Client_Request_WithUnexpectedError_Repeatedly
     {
         public Client Subject { get; set; }
-        string key = "key";
+        private const string key = "key";
 
         [SetUp]
         public void SetUp()
@@ -358,7 +359,7 @@ namespace TinifyAPI.Tests
 
             Assert.AreEqual(
                 "Error while connecting: some error",
-                error.Message
+                error?.Message
             );
         }
     }
@@ -367,7 +368,7 @@ namespace TinifyAPI.Tests
     public class Client_Request_WithServerError_Once
     {
         public Client Subject { get; set; }
-        string key = "key";
+        private const string key = "key";
 
         [SetUp]
         public void SetUp()
@@ -396,7 +397,7 @@ namespace TinifyAPI.Tests
     public class Client_Request_WithServerError_Repeatedly
     {
         public Client Subject { get; set; }
-        string key = "key";
+        private const string key = "key";
 
         [SetUp]
         public void SetUp()
@@ -424,7 +425,7 @@ namespace TinifyAPI.Tests
 
             Assert.AreEqual(
                 "Oops! (HTTP 584/InternalServerError)",
-                error.Message
+                error?.Message
             );
         }
     }
@@ -433,7 +434,7 @@ namespace TinifyAPI.Tests
     public class Client_Request_WithBadServerResponse_Once
     {
         public Client Subject { get; set; }
-        string key = "key";
+        private const string key = "key";
 
         [SetUp]
         public void SetUp()
@@ -462,7 +463,7 @@ namespace TinifyAPI.Tests
     public class Client_Request_WithBadServerResponse_Repeatedly
     {
         public Client Subject { get; set; }
-        string key = "key";
+        private const string key = "key";
 
         [SetUp]
         public void SetUp()
@@ -500,7 +501,7 @@ namespace TinifyAPI.Tests
     public class Client_Request_WithClientError
     {
         public Client Subject { get; set; }
-        string key = "key";
+        private const string key = "key";
 
         [SetUp]
         public void SetUp()
@@ -523,7 +524,7 @@ namespace TinifyAPI.Tests
 
             Assert.AreEqual(
                 "Oops! (HTTP 492/BadRequest)",
-                error.Message
+                error?.Message
             );
         }
     }
@@ -532,7 +533,7 @@ namespace TinifyAPI.Tests
     public class Client_Request_WithBadCredentials
     {
         public Client Subject { get; set; }
-        string key = "key";
+        private const string key = "key";
 
         [SetUp]
         public void SetUp()
@@ -555,7 +556,7 @@ namespace TinifyAPI.Tests
 
             Assert.AreEqual(
                 "Oops! (HTTP 401/Unauthorized)",
-                error.Message
+                error?.Message
             );
         }
     }
