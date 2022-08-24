@@ -26,5 +26,7 @@ jobs:
       run: |
         dotnet build --configuration Release --no-restore
     - name: Run tests
+      env:
+        TINIFY_KEY: ${{ secrets.TINIFY_KEY }}
       run: |
-        dotnet test ./test/Tinify.Tests --no-restore --verbosity normal
+        dotnet test --configuration Release --no-restore --verbosity normal
