@@ -1,25 +1,26 @@
-﻿using NUnit.Framework;
-
+﻿using MetadataExtractor;
+using MetadataExtractor.Formats.FileType;
+using MetadataExtractor.Formats.Jpeg;
+using MetadataExtractor.Formats.Png;
+using MetadataExtractor.Formats.WebP;
+using MetadataExtractor.Formats.Xmp;
+using NUnit.Framework;
 using System;
+using System.Collections.Generic;
 using System.IO;
-using System.Text;
+using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.VisualBasic;
+using MetadataDirectory = MetadataExtractor.Directory;
 
 namespace TinifyAPI.Tests.Integration
 {
-    sealed class TempFile : IDisposable
+    internal sealed class TempFile : IDisposable
     {
-        private string path;
-
-        public string Path
-        {
-            get { return path; }
-        }
+        public string Path { get; private set; }
 
         public TempFile()
         {
-            path = System.IO.Path.GetTempFileName();
+            Path = System.IO.Path.GetTempFileName();
         }
 
         ~TempFile()
@@ -35,41 +36,78 @@ namespace TinifyAPI.Tests.Integration
         private void Dispose(bool disposing)
         {
             if (disposing) GC.SuppressFinalize(this);
-            try { File.Delete(path); } catch { }
-            path = null;
+            try { File.Delete(Path); } catch { }
+            Path = null;
         }
     }
 
-    internal static class Helper
+    internal sealed class ImageMetadata
     {
-        public static bool ContainsSubsequence(this byte[] source, byte[] subsequence)
+        private const string ImagePngMimeTypeString = "image/png";
+        private const string ImageJpegMimeTypeString = "image/jpeg";
+        private const string ImageWebPMimeTypeString = "image/webp";
+
+        private readonly IReadOnlyList<MetadataDirectory> _metaDataDirectories;
+
+        private string _imageFileType;
+        public string ImageFileType => _imageFileType ??= GetImageFileType();
+
+        public ImageMetadata(byte[] imageData)
         {
-            if (source == subsequence) return true;
-            if (source.Length < subsequence.Length) return false;
-            return Search(source, subsequence) != -1;
+            using var ms = new MemoryStream(imageData);
+            _metaDataDirectories = ImageMetadataReader.ReadMetadata(ms);
         }
 
-        /*!
-         * Code snippet for Search function from StackExchange Network question on <https://stackoverflow.com/questions/283456/> 
-         * Answered and copied from <https://stackoverflow.com/a/38625726> 
-         * Licensed under CC BY-SA 3.0 <http://creativecommons.org/licenses/by-sa/3.0/>
-         */
-        private static int Search(byte[] src, byte[] pattern)
+        public ImageMetadata(string fileName)
         {
-            int maxFirstCharSlot = src.Length - pattern.Length + 1;
-            for (int i = 0; i < maxFirstCharSlot; i++)
+            _metaDataDirectories = ImageMetadataReader.ReadMetadata(fileName);
+        }
+
+        public bool IsPng => ImageFileType.Equals(ImagePngMimeTypeString, StringComparison.Ordinal);
+        public bool IsJpeg => ImageFileType.Equals(ImageJpegMimeTypeString, StringComparison.Ordinal);
+        public bool IsWebP => ImageFileType.Equals(ImageWebPMimeTypeString, StringComparison.Ordinal);
+
+        private string GetImageFileType()
+        {
+            var fileTypeDir = _metaDataDirectories.OfType<FileTypeDirectory>().FirstOrDefault();
+            if (fileTypeDir is null) return "unknown";
+            return fileTypeDir.GetObject(FileTypeDirectory.TagDetectedFileMimeType) as string;
+        }
+
+        public int GetImageWidth()
+        {
+            return ImageFileType switch
             {
-                if (src[i] != pattern[0]) // compare only first byte
-                    continue;
-        
-                // found a match on first byte, now try to match rest of the pattern
-                for (int j = pattern.Length - 1; j >= 1; j--) 
-                {
-                    if (src[i + j] != pattern[j]) break;
-                    if (j == 1) return i;
-                }
-            }
-            return -1;
+                ImagePngMimeTypeString => GetWidthFromPng(),
+                ImageJpegMimeTypeString => GetWidthFromJpeg(),
+                ImageWebPMimeTypeString => GetWidthFromWebP(),
+                _ => -1
+            };
+        }
+
+        public bool ContainsStringInXmpData(string toFind)
+        {
+            var dir = _metaDataDirectories.FirstOrDefault(d => d.Name.Equals("XMP", StringComparison.Ordinal));
+            return (dir is XmpDirectory xmp) &&
+                   xmp.GetXmpProperties().Any(pair => pair.Value.Equals(toFind, StringComparison.Ordinal));
+        }
+
+        private int GetWidthFromPng()
+        {
+            var header = _metaDataDirectories.FirstOrDefault(d => d.Name.Equals("PNG-IHDR", StringComparison.Ordinal));
+            return (header?.GetObject(PngDirectory.TagImageWidth) as int?) ?? -1;
+        }
+
+        private int GetWidthFromJpeg()
+        {
+            var header = _metaDataDirectories.FirstOrDefault(d => d.Name.Equals("JPEG", StringComparison.Ordinal));
+            return (header?.GetObject(JpegDirectory.TagImageWidth) as int?) ?? -1;
+        }
+
+        private int GetWidthFromWebP()
+        {
+            var header = _metaDataDirectories.FirstOrDefault(d => d.Name.Equals("WebP", StringComparison.Ordinal));
+            return (header?.GetObject(WebPDirectory.TagImageWidth) as int?) ?? -1;
         }
     }
 
@@ -78,12 +116,11 @@ namespace TinifyAPI.Tests.Integration
     {
         static Task<Source> optimized;
 
-        private static readonly byte[] CopyrightBytes = Encoding.ASCII.GetBytes("Copyright Voormedia");
+        private const string VoormediaCopyright = "Copyright Voormedia";
 
         [OneTimeSetUp]
         public static void Init()
         {
-            var currDir = Directory.GetCurrentDirectory();
             DotNetEnv.Env.Load();
 
             Tinify.Key = Environment.GetEnvironmentVariable("TINIFY_KEY");
@@ -101,15 +138,15 @@ namespace TinifyAPI.Tests.Integration
                 optimized.ToFile(file.Path).Wait();
 
                 var size = new FileInfo(file.Path).Length;
-                var contents = File.ReadAllBytes(file.Path);
-                File.WriteAllBytes(@"D:\temp\TestCompressFromFile.png", contents);
-
                 Assert.Greater(size, 1000);
                 Assert.Less(size, 1500);
 
+                var metaData = new ImageMetadata(file.Path);
+                Assert.That(metaData.IsPng);
+
                 /* width == 137 */
-                Assert.IsTrue(contents.ContainsSubsequence(new byte[] {0, 0, 0, 0x89}));
-                Assert.IsFalse(contents.ContainsSubsequence(CopyrightBytes));
+                Assert.AreEqual(137, metaData.GetImageWidth());
+                Assert.IsFalse(metaData.ContainsStringInXmpData(VoormediaCopyright));
             }
         }
 
@@ -125,16 +162,15 @@ namespace TinifyAPI.Tests.Integration
                 source.ToFile(file.Path).Wait();
 
                 var size = new FileInfo(file.Path).Length;
-                var contents = File.ReadAllBytes(file.Path);
-
-                File.WriteAllBytes(@"D:\temp\TestCompressFromUrl.png", contents);
-
                 Assert.Greater(size, 1000);
                 Assert.Less(size, 1500);
 
+                var metaData = new ImageMetadata(file.Path);
+                Assert.That(metaData.IsPng);
+
                 /* width == 137 */
-                Assert.IsTrue(contents.ContainsSubsequence(new byte[] {0, 0, 0, 0x89}));
-                Assert.IsFalse(contents.ContainsSubsequence(CopyrightBytes));
+                Assert.AreEqual(137, metaData.GetImageWidth());
+                Assert.IsFalse(metaData.ContainsStringInXmpData(VoormediaCopyright));
             }
         }
 
@@ -147,16 +183,15 @@ namespace TinifyAPI.Tests.Integration
                 optimized.Resize(options).ToFile(file.Path).Wait();
 
                 var size = new FileInfo(file.Path).Length;
-                var contents = File.ReadAllBytes(file.Path);
-
-                File.WriteAllBytes(@"D:\temp\TestShouldResize.png", contents);
-
                 Assert.Greater(size, 500);
                 Assert.Less(size, 1000);
 
+                var metaData = new ImageMetadata(file.Path);
+                Assert.That(metaData.IsPng);
+
                 /* width == 50 */
-                Assert.IsTrue(contents.ContainsSubsequence(new byte[] {0, 0, 0, 0x32}));
-                Assert.IsFalse(contents.ContainsSubsequence(CopyrightBytes));
+                Assert.AreEqual(50, metaData.GetImageWidth());
+                Assert.IsFalse(metaData.ContainsStringInXmpData(VoormediaCopyright));
             }
         }
 
@@ -169,15 +204,15 @@ namespace TinifyAPI.Tests.Integration
                 optimized.Preserve(options).ToFile(file.Path).Wait();
 
                 var size = new FileInfo(file.Path).Length;
-                var contents = File.ReadAllBytes(file.Path);
-                File.WriteAllBytes(@"D:\temp\TestShouldPreserve.png", contents);
-
                 Assert.Greater(size, 1000);
                 Assert.Less(size, 2000);
 
+                var metaData = new ImageMetadata(file.Path);
+                Assert.That(metaData.IsPng);
+
                 /* width == 137 */
-                Assert.IsTrue(contents.ContainsSubsequence(new byte[] {0, 0, 0, 0x89}));
-                Assert.IsTrue(contents.ContainsSubsequence(CopyrightBytes));
+                Assert.AreEqual(137, metaData.GetImageWidth());
+                Assert.IsTrue(metaData.ContainsStringInXmpData(VoormediaCopyright));
             }
         }
     }
