@@ -62,12 +62,6 @@ namespace TinifyAPI.Tests.Integration
         private string _imageFileType;
         public string ImageFileType => _imageFileType ??= GetImageFileType();
 
-        public ImageMetadata(byte[] imageData)
-        {
-            using var ms = new MemoryStream(imageData);
-            _metaDataDirectories = ImageMetadataReader.ReadMetadata(ms);
-        }
-
         public ImageMetadata(string fileName)
         {
             _metaDataDirectories = ImageMetadataReader.ReadMetadata(fileName);
@@ -128,7 +122,7 @@ namespace TinifyAPI.Tests.Integration
     [TestFixture]
     public class Client_Integration
     {
-        static Task<Source> optimized;
+        private static Task<Source> optimized;
 
         private const string VoormediaCopyright = "Copyright Voormedia";
 
