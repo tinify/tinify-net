@@ -1,5 +1,4 @@
-https://github.com/jshergal/tinify-net/actions/workflows/CI_CD/badge.svg
-![CI/CD](https://github.com/jshergal/tinify-net/actions/workflows/CI_CD/badge.svg)
+![CI_CD](https://github.com/jshergal/tinify-net/actions/workflows/ci-cd.yml/badge.svg)
 
 # Tinify API client for .NET
 
