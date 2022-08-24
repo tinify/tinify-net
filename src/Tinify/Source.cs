@@ -1,6 +1,7 @@
 using System;
 using System.Net.Http;
 using System.Collections.Generic;
+using System.Drawing;
 using System.IO;
 using System.Threading.Tasks;
 
@@ -57,6 +58,24 @@ namespace TinifyAPI
         public Source Resize(object options)
         {
             return new Source(url, mergeCommands("resize", options));
+        }
+
+        public Source Transcode(params string[] targetImageMimeTypes)
+        {
+            return new Source(url, mergeCommands("type", targetImageMimeTypes));
+        }
+
+        public Source Transform(Color backgroundColor)
+        {
+            var htmlColor = "#" + backgroundColor.R.ToString("X2", null)
+                                + backgroundColor.G.ToString("X2", null)
+                                + backgroundColor.B.ToString("X2", null);
+            return Transform(htmlColor);
+        }
+
+        public Source Transform(string backgroundColor)
+        {
+            return new Source(url, mergeCommands("transform", new { background = backgroundColor }));
         }
 
         public async Task<ResultMeta> Store(object options)

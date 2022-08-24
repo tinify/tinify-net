@@ -7,6 +7,7 @@ using MetadataExtractor.Formats.Xmp;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -101,7 +102,11 @@ namespace TinifyAPI.Tests.Integration
         private int GetWidthFromJpeg()
         {
             var header = _metaDataDirectories.FirstOrDefault(d => d.Name.Equals("JPEG", StringComparison.Ordinal));
-            return (header?.GetObject(JpegDirectory.TagImageWidth) as int?) ?? -1;
+            var tag = header?.GetObject(JpegDirectory.TagImageWidth);
+            if (tag is null) return -1;
+
+            // Jpeg exif width tag is a Uint16, so need to use convert
+            return Convert.ToInt32(tag);
         }
 
         private int GetWidthFromWebP()
@@ -214,6 +219,52 @@ namespace TinifyAPI.Tests.Integration
                 Assert.AreEqual(137, metaData.GetImageWidth());
                 Assert.IsTrue(metaData.ContainsStringInXmpData(VoormediaCopyright));
             }
+        }
+
+        [Test]
+        public void Should_Resize_And_PreserveMetadata()
+        {
+            using var file = new TempFile();
+            var resizeOptions = new { method = "fit", width = 50, height = 20 };
+            var preserveOptions = new string[] { "copyright", "location" };
+            optimized.Resize(resizeOptions).Preserve(preserveOptions).ToFile(file.Path).Wait();
+
+            var size = new FileInfo(file.Path).Length;
+            Assert.Greater(size, 500);
+            Assert.Less(size, 1100);
+
+            var metaData = new ImageMetadata(file.Path);
+            Assert.That(metaData.IsPng);
+
+            /* width == 50 */
+            Assert.AreEqual(50, metaData.GetImageWidth());
+            Assert.IsTrue(metaData.ContainsStringInXmpData(VoormediaCopyright));
+        }
+
+        [Test]
+        public void Should_Transcode_ToJpeg()
+        {
+            using var file = new TempFile();
+            optimized.Transcode("image/jpeg").Transform(Color.Black).ToFile(file.Path).Wait();
+
+            var metaData = new ImageMetadata(file.Path);
+            Assert.That(metaData.IsJpeg);
+
+            /* width == 137 */
+            Assert.AreEqual(137, metaData.GetImageWidth());
+        }
+
+        [Test]
+        public void Should_Transcode_ToWebP()
+        {
+            using var file = new TempFile();
+            optimized.Transcode(new [] {"image/jpeg", "image/webp"}).ToFile(file.Path).Wait();
+
+            var metaData = new ImageMetadata(file.Path);
+            Assert.That(metaData.IsWebP);
+
+            /* width == 137 */
+            Assert.AreEqual(137, metaData.GetImageWidth());
         }
     }
 }

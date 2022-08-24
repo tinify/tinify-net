@@ -1,3 +1,4 @@
+using System.Drawing;
 using System.Threading.Tasks;
 
 namespace TinifyAPI
@@ -16,11 +17,30 @@ namespace TinifyAPI
             return source.Resize(options);
         }
 
+        public static async Task<Source> Transcode(this Task<Source> task, params string[] targetImageMimeTypes)
+        {
+            var source = await task.ConfigureAwait(false);
+            return source.Transcode(targetImageMimeTypes);
+        }
+
+        public static async Task<Source> Transform(this Task<Source> task, Color backgroundColor)
+        {
+            var source = await task.ConfigureAwait(false);
+            return source.Transform(backgroundColor);
+        }
+
+        public static async Task<Source> Transform(this Task<Source> task, string backgroundColor)
+        {
+            var source = await task.ConfigureAwait(false);
+            return source.Transform(backgroundColor);
+        }
+
         public static async Task<ResultMeta> Store(this Task<Source> task, object options)
         {
             var source = await task.ConfigureAwait(false);
             return await source.Store(options).ConfigureAwait(false);
         }
+
 
         public static async Task<Result> GetResult(this Task<Source> task)
         {
