@@ -1,4 +1,4 @@
-name: CI_CD
+name: CI_NetFramework
 
 on:
   push:
@@ -12,12 +12,10 @@ on:
 
 jobs:
   build_and_test:
-    runs-on: ${{ matrix.os }}
+    runs-on: windows-latest
     timeout-minutes: 10
     strategy:
       fail-fast: false
-      matrix:
-        os: [ubuntu-latest, macOS-latest, windows-latest]
 
     steps:
     - name: Checkout
