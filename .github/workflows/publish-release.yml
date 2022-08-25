@@ -57,8 +57,8 @@ jobs:
       
     - name: Package
       run: |
-        dotnet pack src/Tinify/Tinify.csproj -c Release --no-restore --no-build --include-symbols -p:Version=$BUILD_VERSION -p:SymbolPackageFormat=snupkg -o .
+        dotnet pack src/Tinify/Tinify.csproj -c Release --no-restore --no-build --include-symbols -p:Version=$BUILD_VERSION -p:SymbolPackageFormat=snupkg -p:PackageID=Tinify-netstandard20 -o .
         
     - name: Push to Nuget
       run: |
-        dotnet nuget push *.nupkg --skip-duplicate -s https://api.nuget.org/v3/index.json -k ${{secrets.NUGET_API_KEY}}
+        dotnet nuget push *.nupkg --skip-duplicate -s https://api.nuget.org/v3/index.json --api-key ${{secrets.NUGET_API_KEY}}
