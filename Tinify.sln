@@ -1,18 +1,17 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.26114.2
+# Visual Studio Version 17
+VisualStudioVersion = 17.3.32819.101
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tinify", "src/Tinify/Tinify.csproj", "{1994BC29-CB8D-4232-A203-E379FF44BFC5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tinify", "src\Tinify\Tinify.csproj", "{1994BC29-CB8D-4232-A203-E379FF44BFC5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tinify.Tests", "test/Tinify.Tests/Tinify.Tests.csproj", "{E6666FF9-795C-494D-BB1D-386A51AAF716}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tinify.Tests", "test\Tinify.Tests\Tinify.Tests.csproj", "{E6666FF9-795C-494D-BB1D-386A51AAF716}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tinify.Tests.Integration", "test/Tinify.Tests.Integration/Tinify.Tests.Integration.csproj", "{C40DC1BF-1B16-4EBA-B373-58994EBC6C07}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tinify.Tests.Integration", "test\Tinify.Tests.Integration\Tinify.Tests.Integration.csproj", "{C40DC1BF-1B16-4EBA-B373-58994EBC6C07}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".BuildingStuff", ".BuildingStuff", "{5E68512B-E096-427E-9B8C-C689175AC00C}"
 	ProjectSection(SolutionItems) = preProject
-		appveyor.yml = appveyor.yml
-		Build.ps1 = Build.ps1
+		GetBuildVersion.psm1 = GetBuildVersion.psm1
 	EndProjectSection
 EndProject
 Global
@@ -36,5 +35,8 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {0A1C76E1-35C6-485E-82C4-7B083D07887A}
 	EndGlobalSection
 EndGlobal

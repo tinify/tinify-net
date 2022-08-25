@@ -11,13 +11,14 @@ namespace TinifyAPI.Tests
         private static readonly FieldInfo HttpClientField = typeof(Client)
             .GetField("_client", BindingFlags.Instance | BindingFlags.NonPublic);
 
-#if NET472 || NET48
-        private static readonly FieldInfo HttpHandlerField = typeof(HttpMessageInvoker)
-            .GetField("handler", BindingFlags.Instance | BindingFlags.NonPublic);
-#else
-        private static readonly FieldInfo HttpHandlerField = typeof(HttpMessageInvoker)
-            .GetField("_handler", BindingFlags.Instance | BindingFlags.NonPublic);
-#endif
+        private static readonly FieldInfo HttpHandlerField = GetHttpHandlerField();
+
+        private static FieldInfo GetHttpHandlerField()
+        {
+            var msgInvoker = typeof(HttpMessageInvoker);
+            var handlerField = msgInvoker.GetField("handler", BindingFlags.Instance | BindingFlags.NonPublic);
+            return handlerField ?? msgInvoker.GetField("_handler", BindingFlags.Instance | BindingFlags.NonPublic);
+        }
 
         public static MockHttpMessageHandler MockHandler;
         public static HttpRequestMessage LastRequest;
