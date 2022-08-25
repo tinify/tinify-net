@@ -1,0 +1,64 @@
+name: Publish_Release
+
+on:
+  release:
+    types: [ created ]
+    branches: [ "master" ]
+
+  push:
+    tags:
+      - '*'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+      with:
+        fetch-depth: 0
+
+    - name: Set up dotnet 
+      uses: actions/setup-dotnet@v2
+      with:
+        dotnet-version: |
+         3.1.x
+         6.0.x
+
+    - uses: actions/cache@v3
+      with:
+        path: ~/.nuget/packages
+        key: ${{ runner.os }}-nuget-${{ hashFiles('**/*.csproj') }}
+        restore-keys: |
+          ${{ runner.os }}-nuget-
+
+    - name: Install dependencies
+      run: |
+        dotnet restore
+
+    - name: Build
+      run: |
+        dotnet build --configuration Release --no-restore
+
+    - name: Run tests
+      env:
+        TINIFY_KEY: ${{ secrets.TINIFY_KEY }}
+      run: |
+        dotnet test --configuration Release --no-restore --verbosity normal
+        
+    - name: Get Build Version
+      run: |
+        Import-Module .\GetBuildVersion.psm1
+        Write-Host $Env:GITHUB_REF
+        $version = GetBuildVersion -VersionString $Env:GITHUB_REF
+        echo "BUILD_VERSION=$version" | Out-File -FilePath $Env:GITHUB_ENV -Encoding utf-8 -Append
+      shell: pwsh
+      
+    - name: Package
+      run: |
+        dotnet pack src/Tinify/Tinify.csproj -c Release --no-restore --no-build --include-symbols -p:Version=$BUILD_VERSION -p:SymbolPackageFormat=snupkg -o .
+        
+    - name: Push to Nuget
+      run: |
+        dotnet nuget push *.nupkg --skip-duplicate -s https://api.nuget.org/v3/index.json -k ${{secrets.NUGET_API_KEY}}
