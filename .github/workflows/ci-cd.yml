@@ -48,8 +48,18 @@ jobs:
       run: |
         dotnet build --configuration Release --no-restore
 
-    - name: Run tests
+    - name: Run tests on mac and linux
+      if: ${{ !startsWith(matrix.os, 'windows') }}
       env:
         TINIFY_KEY: ${{ secrets.TINIFY_KEY }}
       run: |
-        dotnet test --configuration Release --no-restore --verbosity normal
+        dotnet test --configuration Release --no-build --verbosity normal --framework netcoreapp3.1
+        dotnet test --configuration Release --no-build --verbosity normal --framework net5.0
+        dotnet test --configuration Release --no-build --verbosity normal --framework net6.0
+
+    - name: Run tests on windows
+      if: startsWith(matrix.os, 'windows')
+      env:
+        TINIFY_KEY: ${{ secrets.TINIFY_KEY }}
+      run: |
+        dotnet test --configuration Release --no-build --verbosity normal
