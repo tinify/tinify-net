@@ -1,14 +1,18 @@
 name: CI_CD
 
 on:
+  workflow_dispatch:
+
   push:
     paths-ignore:
     - "**/*.md"
     - "**/*.gitignore"
     - "**/*.gitattributes"
+
   pull_request:
     branches:
       - main
+
   release:
     types:
       - published
@@ -88,17 +92,13 @@ jobs:
         with:
           dotnet-version: 6.0.x
 
-      - name: Get Build Version
-        run: |
-          Import-Module .\GetBuildVersion.psm1
-          Write-Host $Env:GITHUB_REF
-          $version = GetBuildVersion -VersionString $Env:GITHUB_REF
-          echo "BUILD_VERSION=$version" | Out-File -FilePath $Env:GITHUB_ENV -Encoding utf-8 -Append
-          shell: pwsh
-
       - name: Create Release NuGet package
         run: |
-          dotnet pack -v normal -c Release --include-symbols --include-source -p:PackageVersion=$BUILD_VERSION -p:PackageId=Tinify-netstandard20 -o nupkg src/Tinify/Tinify.csproj
+          arrTag=(${GITHUB_REF//\// })
+          VERSION="${arrTag[2]}"
+          VERSION="${VERSION//v}"
+          echo Clean Version: $VERSION
+          dotnet pack -v normal -c Release --include-symbols --include-source -p:PackageVersion=$VERSION -p:PackageId=Tinify-netstandard20 -o nupkg src/Tinify/Tinify.csproj
 
       - name: Push to Nuget
         run: |
