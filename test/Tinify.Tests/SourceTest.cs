@@ -347,5 +347,75 @@ namespace TinifyAPI.Tests
                 );
             }
         }
+
+        [Test]
+        public void Transform_Should_ReturnSourceTask()
+        {
+            var buffer = Encoding.ASCII.GetBytes("png file");
+            Assert.IsInstanceOf<Task<Source>>(
+                Source.FromBuffer(buffer).Transform(Color.Black)
+            );
+        }
+
+        [Test]
+        public void Transform_Should_ReturnSourceTask_WithData()
+        {
+            Helper.EnqueueShrinkAndResult(Tinify.Client, "transformed file");
+
+            var buffer = Encoding.ASCII.GetBytes("png file");
+            Assert.AreEqual(
+                Encoding.ASCII.GetBytes("transformed file"),
+                Source.FromBuffer(buffer).Transform(Color.Black).ToBuffer().Result
+            );
+
+            Assert.AreEqual(
+                "{\"transform\":{\"background\":\"#000000\"}}",
+                Helper.LastBody);
+        }
+
+        [Test]
+        public void Transcode_Should_ReturnSourceTask()
+        {
+            var buffer = Encoding.ASCII.GetBytes("png file");
+            Assert.IsInstanceOf<Task<Source>>(
+                Source.FromBuffer(buffer).Transcode("image/webp")
+            );
+        }
+
+        [Test]
+        public void Transcode_Should_ReturnSourceTask_WithData()
+        {
+            Helper.EnqueueShrinkAndResult(Tinify.Client, "transcoded file");
+            var buffer = Encoding.ASCII.GetBytes("png file");
+            Assert.AreEqual(
+                Encoding.ASCII.GetBytes("transcoded file"),
+                Source.FromBuffer(buffer).Transcode("image/jpeg").ToBuffer().Result);
+
+            Assert.AreEqual(
+                "{\"type\":[\"image/jpeg\"]}",
+                Helper.LastBody);
+        }
+
+        [Test]
+        public void Test_All_Options_Together()
+        {
+            Helper.EnqueuShrinkAndStore(Tinify.Client);
+
+            var buffer = Encoding.ASCII.GetBytes("png file");
+            Assert.AreEqual(
+                new Uri("https://bucket.s3.amazonaws.com/example"),
+                Source.FromBuffer(buffer)
+                    .Resize(new { width = 400 })
+                    .Transcode(new [] {"image/webp", "image/png"})
+                    .Transform(Color.Black)
+                    .Preserve("copyright", "location")
+                    .Store(new { service = "s3" }).Result.Location
+            );
+
+            Assert.AreEqual("{\"resize\":{\"width\":400},\"type\":[\"image/webp\",\"image/png\"],"
+            + "\"transform\":{\"background\":\"#000000\"},\"preserve\":[\"copyright\",\"location\"],"
+            + "\"store\":{\"service\":\"s3\"}}",
+                Helper.LastBody);
+        }
     }
 }

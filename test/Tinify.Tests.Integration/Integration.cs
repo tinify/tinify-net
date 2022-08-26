@@ -243,5 +243,31 @@ namespace TinifyAPI.Tests.Integration
             Assert.AreEqual(50, metaData.GetImageWidth());
             Assert.IsTrue(metaData.ContainsStringInXmpData(VoormediaCopyright));
         }
+
+        [Test]
+        public void Should_Transcode_ToJpeg()
+        {
+            using var file = new TempFile();
+            optimized.Transcode("image/jpeg").Transform(Color.Black).ToFile(file.Path).Wait();
+
+            var metaData = new ImageMetadata(file.Path);
+            Assert.That(metaData.IsJpeg);
+
+            /* width == 137 */
+            Assert.AreEqual(137, metaData.GetImageWidth());
+        }
+
+        [Test]
+        public void Should_Transcode_ToWebP()
+        {
+            using var file = new TempFile();
+            optimized.Transcode(new [] {"image/jpeg", "image/webp"}).ToFile(file.Path).Wait();
+
+            var metaData = new ImageMetadata(file.Path);
+            Assert.That(metaData.IsWebP);
+
+            /* width == 137 */
+            Assert.AreEqual(137, metaData.GetImageWidth());
+        }
     }
 }
