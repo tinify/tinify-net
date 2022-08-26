@@ -12,6 +12,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".BuildingStuff", ".Building
 	ProjectSection(SolutionItems) = preProject
 		CHANGES.md = CHANGES.md
 		.github\workflows\ci-cd.yml = .github\workflows\ci-cd.yml
+		README.md = README.md
 	EndProjectSection
 EndProject
 Global
