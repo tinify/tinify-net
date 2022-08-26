@@ -9,6 +9,18 @@ on:
   pull_request:
     branches:
       - main
+  release:
+    types:
+      - published
+
+env:
+  # more info on dotnet cli environment variables here: https://docs.microsoft.com/en-us/dotnet/core/tools/dotnet-environment-variables
+  # Disable sending usage data to Microsoft
+  DOTNET_CLI_TELEMETRY_OPTOUT: true
+  # Disable welcome message on dotnet CLI first run
+  DOTNET_NOLOGO: true
+  # Disable redundant package caching
+  DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
 
 jobs:
   build_and_test:
@@ -22,8 +34,6 @@ jobs:
     steps:
     - name: Checkout
       uses: actions/checkout@v3
-      with:
-        fetch-depth: 0
 
     - name: Set up dotnet 
       uses: actions/setup-dotnet@v2
@@ -46,7 +56,7 @@ jobs:
 
     - name: Build
       run: |
-        dotnet build --configuration Release --no-restore
+        dotnet build --configuration Release --version-sufix "$GITHUB_RUN_ID-prerelease" --no-restore
 
     - name: Run tests on mac and linux
       if: ${{ !startsWith(matrix.os, 'windows') }}
@@ -63,3 +73,32 @@ jobs:
         TINIFY_KEY: ${{ secrets.TINIFY_KEY }}
       run: |
         dotnet test --configuration Release --no-build --verbosity normal
+
+  deploy:
+    needs: build_and_test
+    if: github.event_name == 'release'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Set up dotnet 
+        uses: actions/setup-dotnet@v2
+        with:
+          dotnet-version: 6.0.x
+
+      - name: Get Build Version
+        run: |
+          Import-Module .\GetBuildVersion.psm1
+          Write-Host $Env:GITHUB_REF
+          $version = GetBuildVersion -VersionString $Env:GITHUB_REF
+          echo "BUILD_VERSION=$version" | Out-File -FilePath $Env:GITHUB_ENV -Encoding utf-8 -Append
+          shell: pwsh
+
+      - name: Create Release NuGet package
+          dotnet pack -v normal -c Release --include-symbols --include-source -p:PackageVersion=$BUILD_VERSION -p:PackageId=Tinify-netstandard20 -o nupkg src/Tinify/Tinify.csproj
+
+      - name: Push to Nuget
+        run: |
+          dotnet nuget push *.nupkg --skip-duplicate -s https://api.nuget.org/v3/index.json --api-key ${{secrets.NUGET_API_KEY}}
