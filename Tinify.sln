@@ -1,4 +1,4 @@
-﻿
+
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.3.32819.101
@@ -11,6 +11,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tinify.Tests.Integration", 
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".BuildingStuff", ".BuildingStuff", "{5E68512B-E096-427E-9B8C-C689175AC00C}"
 	ProjectSection(SolutionItems) = preProject
+		CHANGES.md = CHANGES.md
+		.github\workflows\ci-cd.yml = .github\workflows\ci-cd.yml
 		GetBuildVersion.psm1 = GetBuildVersion.psm1
 	EndProjectSection
 EndProject
@@ -37,6 +39,6 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {0A1C76E1-35C6-485E-82C4-7B083D07887A}
+		SolutionGuid = {E4397ECE-81F6-4CFD-8DD7-F322F7AB5992}
 	EndGlobalSection
 EndGlobal

@@ -1,4 +1,4 @@
-## 2.0.1
+## 1.6.1
 * Raised TargetFramework to .NET Standard 2.0
 * Added support for the transcode endpoint
 
