@@ -37,8 +37,8 @@ namespace TinifyAPI.Internal
 
             var components = framework.Split(',');
 
-            var name = components[0].Trim();
-            var version = "unknown";
+            var libraryFrameworkName = components[0].Trim();
+            var libraryFrameworkVersion = "unknown";
 
             for (var i = 1; i < components.Length; i++)
             {
@@ -47,15 +47,15 @@ namespace TinifyAPI.Internal
 
                 if (pair[0].AsSpan().Trim().Equals("Version".AsSpan(), StringComparison.OrdinalIgnoreCase))
                 {
-                    version = pair[1].AsSpan().Trim().TrimStart('v').ToString();
+                    libraryFrameworkVersion = pair[1].AsSpan().Trim().TrimStart('v').ToString();
                 }
             }
 
             var os = GetOSPlatform();
 
-            var details = RuntimeInformation.FrameworkDescription;
+            var runtimeFrameworkDetails = RuntimeInformation.FrameworkDescription;
 
-            return $"{name}/{version} ({os} {details})";
+            return $"{libraryFrameworkName}/{libraryFrameworkVersion} ({os} {runtimeFrameworkDetails})";
         }
     }
 }
