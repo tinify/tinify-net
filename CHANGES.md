@@ -1,7 +1,3 @@
-## 1.6.1
-* Raised TargetFramework to .NET Standard 2.0
-* Added support for the transcode endpoint
-
 ## 1.5.3
 * Removed expired LetsEncrypt 'DST Root' from cabundle causing validation issues on older systems
 
