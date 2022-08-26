@@ -98,7 +98,7 @@ jobs:
           VERSION="${arrTag[2]}"
           VERSION="${VERSION//v}"
           echo Clean Version: $VERSION
-          dotnet pack -v normal -c Release --include-symbols --include-source -p:PackageVersion=$VERSION -p:PackageId=Tinify-netstandard20 -o nupkg src/Tinify/Tinify.csproj
+          dotnet pack src/Tinify/Tinify.csproj -v normal -c Release --include-symbols --include-source -p:PackageVersion=$VERSION -p:PackageId=Tinify-netstandard20 -o .
 
       - name: Push to Nuget
         run: |
