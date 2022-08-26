@@ -56,7 +56,7 @@ jobs:
 
     - name: Build
       run: |
-        dotnet build --configuration Release --version-sufix "$GITHUB_RUN_ID-prerelease" --no-restore
+        dotnet build --configuration Release --version-suffix "$GITHUB_RUN_ID-prerelease" --no-restore
 
     - name: Run tests on mac and linux
       if: ${{ !startsWith(matrix.os, 'windows') }}
