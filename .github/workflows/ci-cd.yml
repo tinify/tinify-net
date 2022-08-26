@@ -97,6 +97,7 @@ jobs:
           shell: pwsh
 
       - name: Create Release NuGet package
+        run: |
           dotnet pack -v normal -c Release --include-symbols --include-source -p:PackageVersion=$BUILD_VERSION -p:PackageId=Tinify-netstandard20 -o nupkg src/Tinify/Tinify.csproj
 
       - name: Push to Nuget
