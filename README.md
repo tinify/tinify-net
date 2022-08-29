@@ -1,4 +1,6 @@
-[![CI_CD](https://github.com/tinify/tinify-net/actions/workflows/ci-cd.yml/badge.svg)](https://github.com/tinify/tinify-net/actions/workflows/ci-cd.yml)  
+[![MIT License](http://img.shields.io/badge/license-MIT-green.svg) ](https://github.com/tinify/tinify-python/blob/main/LICENSE)
+[![CI_CD](https://github.com/tinify/tinify-net/actions/workflows/ci-cd.yml/badge.svg)](https://github.com/tinify/tinify-net/actions/workflows/ci-cd.yml)
+[![Nuget](https://img.shields.io/nuget/v/Tinify)](https://www.nuget.org/packages/Tinify)
 
 # Tinify API client for .NET
 
