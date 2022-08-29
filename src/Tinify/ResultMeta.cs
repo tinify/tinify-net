@@ -6,11 +6,11 @@ namespace TinifyAPI
 {
     public class ResultMeta
     {
-        protected HttpResponseHeaders meta;
+        protected HttpResponseHeaders Meta { get; }
 
         internal ResultMeta(HttpResponseHeaders meta)
         {
-            this.meta = meta;
+            Meta = meta;
         }
 
         public uint? Width
@@ -19,7 +19,7 @@ namespace TinifyAPI
             {
                 uint value;
                 IEnumerable<string> values;
-                if (!meta.TryGetValues("Image-Width", out values))
+                if (!Meta.TryGetValues("Image-Width", out values))
                 {
                     return null;
                 }
@@ -41,7 +41,7 @@ namespace TinifyAPI
             {
                 uint value;
                 IEnumerable<string> values;
-                if (!meta.TryGetValues("Image-Height", out values))
+                if (!Meta.TryGetValues("Image-Height", out values))
                 {
                     return null;
                 }
@@ -61,7 +61,7 @@ namespace TinifyAPI
         {
             get
             {
-                return meta.Location;
+                return Meta.Location;
             }
         }
     }

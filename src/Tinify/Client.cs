@@ -1,9 +1,10 @@
-﻿using Newtonsoft.Json;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Text;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -11,16 +12,24 @@ namespace TinifyAPI
 {
     using Method = HttpMethod;
 
-    public class Client : IDisposable
+    public sealed class Client : IDisposable
     {
-        public static readonly Uri ApiEndpoint = new Uri("https://api.tinify.com");
+        internal sealed class ErrorData
+        {
+            [JsonPropertyName("message")]
+            public string Message { get; init; }
+            [JsonPropertyName("error")]
+            public string Error { get; init; }
+        }
 
-        public static readonly ushort RetryCount = 1;
-        public static readonly ushort RetryDelay = 500;
+        public static readonly Uri ApiEndpoint = new("https://api.tinify.com");
+
+        public static readonly short RetryCount = 1;
+        public static ushort RetryDelay { get; internal set; }= 500;
 
         public static readonly string UserAgent = Internal.Platform.UserAgent;
 
-        HttpClient client;
+        private readonly HttpClient _client;
 
         public Client(string key, string appIdentifier = null, string proxy = null)
         {
@@ -35,7 +44,7 @@ namespace TinifyAPI
                 handler.UseProxy = true;
             }
 
-            client = new HttpClient(handler)
+            _client = new HttpClient(handler)
             {
                 BaseAddress = ApiEndpoint,
                 Timeout = Timeout.InfiniteTimeSpan,
@@ -45,13 +54,13 @@ namespace TinifyAPI
             var userAgent = UserAgent;
             if (appIdentifier != null)
             {
-                userAgent = userAgent + " " + appIdentifier;
+                userAgent += " " + appIdentifier;
             }
 
-            client.DefaultRequestHeaders.Add("User-Agent", userAgent);
+            _client.DefaultRequestHeaders.Add("User-Agent", userAgent);
 
             var credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes("api:" + key));
-            client.DefaultRequestHeaders.Add("Authorization", "Basic " + credentials);
+            _client.DefaultRequestHeaders.Add("Authorization", "Basic " + credentials);
         }
 
         public Task<HttpResponseMessage> Request(Method method, string url)
@@ -80,17 +89,15 @@ namespace TinifyAPI
             {
                 return Request(method, url);
             }
-            else
-            {
-                var json = JsonConvert.SerializeObject(options);
-                var body = new StringContent(json, Encoding.UTF8, "application/json");
-                return Request(method, url, body);
-            }
+
+            var json = JsonSerializer.Serialize(options);
+            var body = new StringContent(json, Encoding.UTF8, "application/json");
+            return Request(method, url, body);
         }
 
         public async Task<HttpResponseMessage> Request(Method method, Uri url, HttpContent body = null)
         {
-            for (short retries = (short) RetryCount; retries >= 0; retries--)
+            for (var retries = RetryCount; retries >= 0; retries--)
             {
                 if (retries < RetryCount)
                 {
@@ -105,29 +112,29 @@ namespace TinifyAPI
                 HttpResponseMessage response;
                 try
                 {
-                    response = await client.SendAsync(request).ConfigureAwait(false);
+                    response = await _client.SendAsync(request).ConfigureAwait(false);
                 }
                 catch (OperationCanceledException err)
                 {
                     if (retries > 0) continue;
                     throw new ConnectionException("Timeout while connecting", err);
                 }
-                catch (System.Exception err)
+                catch (Exception err)
                 {
+                    if (retries > 0) continue;
+
                     if (err.InnerException != null)
                     {
                         err = err.InnerException;
                     }
 
-                    if (retries > 0) continue;
                     throw new ConnectionException("Error while connecting: " + err.Message, err);
                 }
 
                 if (response.Headers.Contains("Compression-Count"))
                 {
                     var compressionCount = response.Headers.GetValues("Compression-Count").First();
-                    uint parsed;
-                    if (uint.TryParse(compressionCount, out parsed))
+                    if (uint.TryParse(compressionCount, out var parsed))
                     {
                         Tinify.CompressionCount = parsed;
                     }
@@ -138,24 +145,24 @@ namespace TinifyAPI
                     return response;
                 }
 
-                var data = new { message = "", error = "" };
+                if (retries > 0 && (uint)response.StatusCode >= 500) continue;
+
+                ErrorData data;
                 try
                 {
-                    data = JsonConvert.DeserializeAnonymousType(
-                        await response.Content.ReadAsStringAsync().ConfigureAwait(false),
-                        data
-                    );
+                    var content = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+                    data = JsonSerializer.Deserialize<ErrorData>(content) ??
+                           new ErrorData() {Message = "Response content was empty.", Error = "ParseError"};
                 }
-                catch (System.Exception err)
+                catch (Exception err)
                 {
-                    data = new {
-                        message = "Error while parsing response: " + err.Message,
-                        error = "ParseError"
+                    data = new ErrorData
+                    {
+                        Message = "Error while parsing response: " + err.Message,
+                        Error = "ParseError"
                     };
                 }
-
-                if (retries > 0 && (uint) response.StatusCode >= 500) continue;
-                throw TinifyException.Create(data.message, data.error, (uint) response.StatusCode);
+                throw TinifyException.Create(data.Message, data.Error, (uint)response.StatusCode);
             }
 
             return null;
@@ -163,20 +170,7 @@ namespace TinifyAPI
 
         public void Dispose()
         {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-
-        protected virtual void Dispose(bool disposing)
-        {
-            if (disposing)
-            {
-                if (client != null)
-                {
-                    client.Dispose();
-                    client = null;
-                }
-            }
+            _client?.Dispose();
         }
     }
 }

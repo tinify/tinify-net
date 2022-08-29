@@ -1,3 +1,4 @@
+using System.Drawing;
 using System.Threading.Tasks;
 
 namespace TinifyAPI
@@ -21,6 +22,7 @@ namespace TinifyAPI
             var source = await task.ConfigureAwait(false);
             return await source.Store(options).ConfigureAwait(false);
         }
+
 
         public static async Task<Result> GetResult(this Task<Source> task)
         {

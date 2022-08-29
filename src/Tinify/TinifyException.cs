@@ -20,7 +20,7 @@ namespace TinifyAPI
             }
         }
 
-        public uint Status = 0;
+        public uint Status { get; }
 
         internal TinifyException() : base() {}
 
@@ -29,7 +29,7 @@ namespace TinifyAPI
         internal TinifyException(string message, string type, uint status) :
             base(message + " (HTTP " + status + "/" + type + ")")
         {
-            this.Status = status;
+            Status = status;
         }
     }
 

@@ -14,9 +14,7 @@ namespace TinifyAPI.Internal
             Uri uri;
             if (!Uri.TryCreate(url, UriKind.Absolute, out uri))
             {
-                throw new ConnectionException(
-                    string.Format("Invalid proxy: cannot parse '{0}'", url)
-                );
+                throw new ConnectionException($"Invalid proxy: cannot parse '{url}'");
             }
 
             if (!string.IsNullOrEmpty(uri.UserInfo))

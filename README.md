@@ -1,4 +1,4 @@
-[<img src="https://ci.appveyor.com/api/projects/status/9g8hc7572vfaf9am/branch/master?svg=true" alt="Build Status">](https://ci.appveyor.com/project/Tinify/tinify-net)
+[![CI_CD](https://github.com/tinify/tinify-net/actions/workflows/ci-cd.yml/badge.svg)](https://github.com/tinify/tinify-net/actions/workflows/ci-cd.yml)  
 
 # Tinify API client for .NET
 
