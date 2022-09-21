@@ -63,22 +63,22 @@ namespace TinifyAPI
             return new ResultMeta(response.Headers);
         }
 
-        public Source Transcode(params string[] targetImageMimeTypes)
+        public Source Convert(object options)
         {
-            return new Source(_url, MergeCommands("type", targetImageMimeTypes));
+            return new Source(_url, MergeCommands("convert", options));
         }
 
-        public Source Transform(Color backgroundColor)
+        public Source TransformBackground(Color backgroundColor)
         {
             var htmlColor = "#" + backgroundColor.R.ToString("X2", null)
                                 + backgroundColor.G.ToString("X2", null)
                                 + backgroundColor.B.ToString("X2", null);
-            return Transform(htmlColor);
+            return Transform(new {background = htmlColor});
         }
 
-        public Source Transform(string backgroundColor)
+        public Source Transform(object options)
         {
-            return new Source(_url, MergeCommands("transform", new { background = backgroundColor }));
+            return new Source(_url, MergeCommands("transform", options));
         }
 
         public async Task<Result> GetResult()

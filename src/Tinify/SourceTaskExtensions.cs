@@ -17,22 +17,22 @@ namespace TinifyAPI
             return source.Resize(options);
         }
 
-        public static async Task<Source> Transcode(this Task<Source> task, params string[] targetImageMimeTypes)
+        public static async Task<Source> Convert(this Task<Source> task, object options)
         {
             var source = await task.ConfigureAwait(false);
-            return source.Transcode(targetImageMimeTypes);
+            return source.Convert(options);
         }
 
-        public static async Task<Source> Transform(this Task<Source> task, Color backgroundColor)
+        public static async Task<Source> TransformBackground(this Task<Source> task, Color backgroundColor)
         {
             var source = await task.ConfigureAwait(false);
-            return source.Transform(backgroundColor);
+            return source.TransformBackground(backgroundColor);
         }
 
-        public static async Task<Source> Transform(this Task<Source> task, string backgroundColor)
+        public static async Task<Source> Transform(this Task<Source> task, object options)
         {
             var source = await task.ConfigureAwait(false);
-            return source.Transform(backgroundColor);
+            return source.Transform(options);
         }
 
         public static async Task<ResultMeta> Store(this Task<Source> task, object options)

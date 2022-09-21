@@ -365,7 +365,7 @@ namespace TinifyAPI.Tests
             var buffer = Encoding.ASCII.GetBytes("png file");
             Assert.AreEqual(
                 Encoding.ASCII.GetBytes("transformed file"),
-                Source.FromBuffer(buffer).Transform(Color.Black).ToBuffer().Result
+                Source.FromBuffer(buffer).TransformBackground(Color.Black).ToBuffer().Result
             );
 
             Assert.AreEqual(
@@ -374,25 +374,25 @@ namespace TinifyAPI.Tests
         }
 
         [Test]
-        public void Transcode_Should_ReturnSourceTask()
+        public void Convert_Should_ReturnSourceTask()
         {
             var buffer = Encoding.ASCII.GetBytes("png file");
             Assert.IsInstanceOf<Task<Source>>(
-                Source.FromBuffer(buffer).Transcode("image/webp")
+                Source.FromBuffer(buffer).Convert(new {type = "image/webp"})
             );
         }
 
         [Test]
-        public void Transcode_Should_ReturnSourceTask_WithData()
+        public void Convert_Should_ReturnSourceTask_WithData()
         {
             Helper.EnqueueShrinkAndResult(Tinify.Client, "transcoded file");
             var buffer = Encoding.ASCII.GetBytes("png file");
             Assert.AreEqual(
                 Encoding.ASCII.GetBytes("transcoded file"),
-                Source.FromBuffer(buffer).Transcode("image/jpeg").ToBuffer().Result);
+                Source.FromBuffer(buffer).Convert(new {type = "image/jpeg"}).ToBuffer().Result);
 
             Assert.AreEqual(
-                "{\"type\":[\"image/jpeg\"]}",
+                "{\"convert\":{\"type\":\"image/jpeg\"}}",
                 Helper.LastBody);
         }
 
@@ -402,17 +402,20 @@ namespace TinifyAPI.Tests
             Helper.EnqueuShrinkAndStore(Tinify.Client);
 
             var buffer = Encoding.ASCII.GetBytes("png file");
+
             Assert.AreEqual(
                 new Uri("https://bucket.s3.amazonaws.com/example"),
                 Source.FromBuffer(buffer)
                     .Resize(new { width = 400 })
-                    .Transcode(new [] {"image/webp", "image/png"})
-                    .Transform(Color.Black)
+                    .Convert(new {
+                        type = new []{"image/webp", "image/png"}
+                    })
+                    .TransformBackground(Color.Black)
                     .Preserve("copyright", "location")
                     .Store(new { service = "s3" }).Result.Location
             );
 
-            Assert.AreEqual("{\"resize\":{\"width\":400},\"type\":[\"image/webp\",\"image/png\"],"
+            Assert.AreEqual("{\"resize\":{\"width\":400},\"convert\":{\"type\":[\"image/webp\",\"image/png\"]},"
             + "\"transform\":{\"background\":\"#000000\"},\"preserve\":[\"copyright\",\"location\"],"
             + "\"store\":{\"service\":\"s3\"}}",
                 Helper.LastBody);

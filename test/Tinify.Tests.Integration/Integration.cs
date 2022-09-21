@@ -245,10 +245,10 @@ namespace TinifyAPI.Tests.Integration
         }
 
         [Test]
-        public void Should_Transcode_ToJpeg()
+        public void Should_Convert_ToJpeg()
         {
             using var file = new TempFile();
-            optimized.Transcode("image/jpeg").Transform(Color.Black).ToFile(file.Path).Wait();
+            optimized.Convert("image/jpeg").TransformBackground(Color.Black).ToFile(file.Path).Wait();
 
             var metaData = new ImageMetadata(file.Path);
             Assert.That(metaData.IsJpeg);
@@ -258,10 +258,10 @@ namespace TinifyAPI.Tests.Integration
         }
 
         [Test]
-        public void Should_Transcode_ToWebP()
+        public void Should_Convert_ToWebP()
         {
             using var file = new TempFile();
-            optimized.Transcode(new [] {"image/jpeg", "image/webp"}).ToFile(file.Path).Wait();
+            optimized.Transcode(new { type = new [] {"image/jpeg", "image/webp"}}).ToFile(file.Path).Wait();
 
             var metaData = new ImageMetadata(file.Path);
             Assert.That(metaData.IsWebP);
