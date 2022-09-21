@@ -55,6 +55,12 @@ namespace TinifyAPI.Tests
         {
             Assert.AreEqual(Encoding.ASCII.GetBytes("image data"), subject.ToBuffer());
         }
+
+        [Test]
+        public void Extension_Should_ReturnExtension()
+        {
+            Assert.AreEqual("png", subject.Extension);
+        }
     }
 
     [TestFixture]
@@ -110,5 +116,12 @@ namespace TinifyAPI.Tests
         {
             Assert.AreEqual(null, subject.ToBuffer());
         }
+
+        [Test]
+        public void Extension_Should_ReturnNull()
+        {
+            Assert.AreEqual(null, subject.Extension);
+        }
+
     }
 }
