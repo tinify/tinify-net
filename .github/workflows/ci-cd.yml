@@ -1,5 +1,4 @@
 name: .NET CI/CD
-
 on: [push, pull_request]
 
 env:
