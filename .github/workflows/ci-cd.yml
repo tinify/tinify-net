@@ -106,7 +106,6 @@ jobs:
         TINIFY_KEY: ${{ secrets.TINIFY_KEY }}
       run: |
         dotnet test --configuration Release --no-build --verbosity normal --framework netcoreapp3.1 test/Tinify.Tests.Integration
-        dotnet test --configuration Release --no-build --verbosity normal --framework net5.0 test/Tinify.Tests.Integration
         dotnet test --configuration Release --no-build --verbosity normal --framework net6.0 test/Tinify.Tests.Integration
 
     - name: Run tests on windows
