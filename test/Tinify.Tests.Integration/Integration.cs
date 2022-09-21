@@ -261,7 +261,7 @@ namespace TinifyAPI.Tests.Integration
         public void Should_Convert_ToWebP()
         {
             using var file = new TempFile();
-            optimized.Transcode(new { type = new [] {"image/jpeg", "image/webp"}}).ToFile(file.Path).Wait();
+            optimized.Convert(new { type = new [] {"image/jpeg", "image/webp"}}).ToFile(file.Path).Wait();
 
             var metaData = new ImageMetadata(file.Path);
             Assert.That(metaData.IsWebP);
