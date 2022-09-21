@@ -1,21 +1,6 @@
-name: CI_CD
+name: .NET CI/CD
 
-on:
-  workflow_dispatch:
-
-  push:
-    paths-ignore:
-    - "**/*.md"
-    - "**/*.gitignore"
-    - "**/*.gitattributes"
-
-  pull_request:
-    branches:
-      - master
-
-  release:
-    types:
-      - published
+on: [push, pull_request]
 
 env:
   # more info on dotnet cli environment variables here: https://docs.microsoft.com/en-us/dotnet/core/tools/dotnet-environment-variables
@@ -27,7 +12,7 @@ env:
   DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
 
 jobs:
-  build_and_test:
+  tests:
     runs-on: ${{ matrix.os }}
     timeout-minutes: 10
     strategy:
@@ -67,20 +52,78 @@ jobs:
       env:
         TINIFY_KEY: ${{ secrets.TINIFY_KEY }}
       run: |
-        dotnet test --configuration Release --no-build --verbosity normal --framework netcoreapp3.1
-        dotnet test --configuration Release --no-build --verbosity normal --framework net5.0
-        dotnet test --configuration Release --no-build --verbosity normal --framework net6.0
+        dotnet test --configuration Release --no-build --verbosity normal --framework netcoreapp3.1 test/Tinify.Tests
+        dotnet test --configuration Release --no-build --verbosity normal --framework net5.0 test/Tinify.Tests
+        dotnet test --configuration Release --no-build --verbosity normal --framework net6.0 test/Tinify.Tests
 
     - name: Run tests on windows
       if: startsWith(matrix.os, 'windows')
       env:
         TINIFY_KEY: ${{ secrets.TINIFY_KEY }}
       run: |
-        dotnet test --configuration Release --no-build --verbosity normal
+        dotnet test --configuration Release --no-build --verbosity normal --framework net6.0 test/Tinify.Tests
 
-  deploy:
-    needs: build_and_test
-    if: github.event_name == 'release'
+  integrationTests:
+    if: github.event_name == 'push'
+    runs-on: ${{ matrix.os }}
+    needs:
+      - "tests"
+    timeout-minutes: 10
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macOS-latest, windows-latest]
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+
+    - name: Set up dotnet 
+      uses: actions/setup-dotnet@v2
+      with:
+        dotnet-version: |
+         3.1.x
+         6.0.x
+
+    - uses: actions/cache@v3
+      with:
+        path: ~/.nuget/packages
+        key: ${{ runner.os }}-nuget-${{ hashFiles('**/*.csproj') }}
+        restore-keys: |
+          ${{ runner.os }}-nuget-
+
+    - name: Install dependencies
+      run: |
+        dotnet restore
+
+    - name: Build
+      run: |
+        dotnet build --configuration Release --version-suffix "$GITHUB_RUN_ID-prerelease" --no-restore
+
+    - name: Run tests on mac and linux
+      if: ${{ !startsWith(matrix.os, 'windows') }}
+      env:
+        TINIFY_KEY: ${{ secrets.TINIFY_KEY }}
+      run: |
+        dotnet test --configuration Release --no-build --verbosity normal --framework netcoreapp3.1 test/Tinify.Tests.Integration
+        dotnet test --configuration Release --no-build --verbosity normal --framework net5.0 test/Tinify.Tests.Integration
+        dotnet test --configuration Release --no-build --verbosity normal --framework net6.0 test/Tinify.Tests.Integration
+
+    - name: Run tests on windows
+      if: startsWith(matrix.os, 'windows')
+      env:
+        TINIFY_KEY: ${{ secrets.TINIFY_KEY }}
+      run: |
+        dotnet test --configuration Release --no-build --verbosity normal --framework net6.0 test/Tinify.Tests.Integration
+
+  publish:
+    if: |
+      github.repository == 'tinify/tinify-net' &&
+      startsWith(github.ref, 'refs/tags') &&
+      github.event_name == 'push'
+    needs:
+      - "tests"
+      - "integrationTests"
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
