@@ -35,5 +35,20 @@ namespace TinifyAPI
         }
 
         public string ContentType => MediaType;
+
+        public string Extension
+        {
+            get
+            {
+                var header = MediaType;
+                if (header != null) {
+                    var parts = header.Split('/');
+                    if(parts.Length > 0) {
+                        return parts[parts.Length - 1];
+                    }
+                }
+                return null;
+            }
+        }
     }
 }
