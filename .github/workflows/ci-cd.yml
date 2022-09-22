@@ -133,13 +133,21 @@ jobs:
         with:
           dotnet-version: 6.0.x
 
+      - name: Check if properly tagged
+        run: |
+          PACKAGE_VERSION="$(sed 's/\s*<VersionPrefix>\(.*\)<\/VersionPrefix>/\1/p' -n < src/Tinify/Tinify.csproj)";
+          CURRENT_TAG="${GITHUB_REF#refs/*/}";
+          if  [[ "${PACKAGE_VERSION}" != "${CURRENT_TAG}" ]]; then
+            >&2 echo "Tag mismatch"
+            >&2 echo "Version in tinify/version.py (${PACKAGE_VERSION}) does not match the current tag=${CURRENT_TAG}"
+            >&2 echo "Skipping deploy"
+            exit 1;
+          fi
       - name: Create Release NuGet package
         run: |
-          arrTag=(${GITHUB_REF//\// })
-          VERSION="${arrTag[2]}"
-          VERSION="${VERSION//v}"
-          echo Clean Version: $VERSION
-          dotnet pack src/Tinify/Tinify.csproj -v normal -c Release --include-symbols --include-source -p:PackageVersion=$VERSION -o .
+          CURRENT_TAG="${GITHUB_REF#refs/*/}";
+          echo "Clean Version: ${CURRENT_TAG}"
+          dotnet pack src/Tinify/Tinify.csproj -v normal -c Release --include-symbols --include-source -p:PackageVersion="${CURRENT_TAG}" -o .
 
       - name: Push to Nuget
         run: |
