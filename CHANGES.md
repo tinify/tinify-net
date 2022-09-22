@@ -1,3 +1,16 @@
+## 1.6.0
+* Increased TargetFramework to netstandard2.0
+* Tinify client is now tested on
+  * netcoreapp3.1
+  * net5.0
+  * net6.0
+* Modernized internals
+* Added new API methods
+  * Source.Convert
+  * Source.Transform
+  * Source.TransformBackground
+  * Result.Extension
+
 ## 1.5.3
 * Removed expired LetsEncrypt 'DST Root' from cabundle causing validation issues on older systems
 
