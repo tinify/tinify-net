@@ -248,7 +248,7 @@ namespace TinifyAPI.Tests.Integration
         public void Should_Convert_ToJpeg()
         {
             using var file = new TempFile();
-            optimized.Convert("image/jpeg").TransformBackground(Color.Black).ToFile(file.Path).Wait();
+            optimized.Convert(new {type = "image/jpeg"}).TransformBackground(Color.Black).ToFile(file.Path).Wait();
 
             var metaData = new ImageMetadata(file.Path);
             Assert.That(metaData.IsJpeg);
