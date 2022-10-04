@@ -23,7 +23,7 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v3
 
-    - name: Set up dotnet 
+    - name: Set up dotnet
       uses: actions/setup-dotnet@v2
       with:
         dotnet-version: |
@@ -77,7 +77,7 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v3
 
-    - name: Set up dotnet 
+    - name: Set up dotnet
       uses: actions/setup-dotnet@v2
       with:
         dotnet-version: |
@@ -128,14 +128,14 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Set up dotnet 
+      - name: Set up dotnet
         uses: actions/setup-dotnet@v2
         with:
           dotnet-version: 6.0.x
 
       - name: Check if properly tagged
         run: |
-          PACKAGE_VERSION="$(sed 's/\s*<VersionPrefix>\(.*\)<\/VersionPrefix>/\1/p' -n < src/Tinify/Tinify.csproj)";
+          PACKAGE_VERSION="$(sed 's/\s*<VersionPrefix>\(.*\)<\/VersionPrefix>/\1/p' -n < src/Tinify/Tinify.csproj | tr -d '\n\r')";
           CURRENT_TAG="${GITHUB_REF#refs/*/}";
           if  [[ "${PACKAGE_VERSION}" != "${CURRENT_TAG}" ]]; then
             >&2 echo "Tag mismatch"
