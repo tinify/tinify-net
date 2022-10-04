@@ -3,7 +3,7 @@
 	<PropertyGroup>
 		<Description>.NET client for the Tinify API. Tinify compresses your images intelligently. Read more at https://tinify.com.</Description>
 		<AssemblyTitle>Tinify</AssemblyTitle>
-		<VersionPrefix>1.5.3</VersionPrefix>
+		<VersionPrefix>1.6.0</VersionPrefix>
 		<Authors>Tinify</Authors>
 		<TargetFramework>netstandard2.0</TargetFramework>
 		<AssemblyName>Tinify</AssemblyName>
