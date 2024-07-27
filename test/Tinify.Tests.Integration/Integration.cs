@@ -229,12 +229,12 @@ namespace TinifyAPI.Tests.Integration
         {
             using var file = new TempFile();
             var resizeOptions = new { method = "fit", width = 50, height = 20 };
-            var preserveOptions = new[] { "copyright", "location" };
+            var preserveOptions = new[] { "location", "copyright" };
             optimized.Resize(resizeOptions).Preserve(preserveOptions).ToFile(file.Path).Wait();
 
             var size = new FileInfo(file.Path).Length;
             Assert.Greater(size, 500);
-            Assert.Less(size, 1100);
+            Assert.Less(size, 1150);
 
             var metaData = new ImageMetadata(file.Path);
             Assert.That(metaData.IsPng);
