@@ -1,5 +1,5 @@
 {
-	"name": "DotNet Core 3.1 and .NET 6",
+	"name": ".NET 8",
 	"build": {
 	  "dockerfile": "Dockerfile"
 	},
