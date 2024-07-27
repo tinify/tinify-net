@@ -1,3 +1,9 @@
+## 1.7.0
+* Added .NET 8 as test target
+* Dropped .NET 6
+* Added tests for macOS ARM
+* Bumped System.Text.Json to 8.0.4
+
 ## 1.6.0
 * Increased TargetFramework to netstandard2.0
 * Tinify client is now tested on

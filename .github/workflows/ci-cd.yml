@@ -145,11 +145,11 @@ jobs:
       env:
         TINIFY_KEY: ${{ secrets.TINIFY_KEY }}
       run: |
-        if ("${{ matrix.dotnet-target }}" -eq "6.0.x") {
+        if ("${{ matrix.dotnet-version }}" -eq "6.0.x") {
           dotnet test --configuration Release --no-build --verbosity normal --framework net6.0 test/Tinify.Tests.Integration
-        } elseif ("${{ matrix.dotnet-target }}" -eq "3.1.x") {
+        } elseif ("${{ matrix.dotnet-version }}" -eq "3.1.x") {
           dotnet test --configuration Release --no-build --verbosity normal --framework netcoreapp3.1 test/Tinify.Tests.Integration
-        } elseif ("${{ matrix.dotnet-target }}" -eq "8.0.x") {
+        } elseif ("${{ matrix.dotnet-version }}" -eq "8.0.x") {
           dotnet test --configuration Release --no-build --verbosity normal --framework net8.0 test/Tinify.Tests.Integration
         } else {
           Write-Error "Unsupported .NET version $env:MATRIX_DOTNET_VERSION"
