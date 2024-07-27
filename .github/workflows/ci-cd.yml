@@ -18,20 +18,29 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, macOS-latest, windows-latest]
-
+        dotnet-target: ["3.1.x", "6.0.x"]
+        exclude:
+          - os: macOS-latest
+            dotnet-target: "3.1.x"
     steps:
     - name: Checkout
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
 
     - name: Set up dotnet
-      uses: actions/setup-dotnet@v2
+      uses: actions/setup-dotnet@v4
       with:
         dotnet-version: |
-         3.1.x
-         5.0.x
-         6.0.x
+          3.1.x
+          6.0.x
+      if: ${{ !startsWith(matrix.os, 'macOS') }}
 
-    - uses: actions/cache@v3
+    - name: Set up dotnet macOS ARM
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: 6.0.x
+      if: startsWith(matrix.os, 'macOS')
+
+    - uses: actions/cache@v4
       with:
         path: ~/.nuget/packages
         key: ${{ runner.os }}-nuget-${{ hashFiles('**/*.csproj') }}
@@ -46,21 +55,32 @@ jobs:
       run: |
         dotnet build --configuration Release --version-suffix "$GITHUB_RUN_ID-prerelease" --no-restore
 
-    - name: Run tests on mac and linux
-      if: ${{ !startsWith(matrix.os, 'windows') }}
+    - name: Run tests (Linux and macOS)
+      if: runner.os != 'Windows'
+      run: |
+        if [ "${{ matrix.dotnet-target }}" == "3.1.x" ]; then
+          dotnet test --configuration Release --no-build --verbosity normal --framework netcoreapp3.1 test/Tinify.Tests
+        elif [ "${{ matrix.dotnet-target }}" == "6.0.x" ]; then
+          dotnet test --configuration Release --no-build --verbosity normal --framework net6.0 test/Tinify.Tests
+        else
+          echo "Error: Unsupported .NET version ${{ matrix.dotnet-target }}" && exit 1
+        fi
+    - name: Run tests (Windows)
+      if: runner.os == 'Windows'
       env:
         TINIFY_KEY: ${{ secrets.TINIFY_KEY }}
       run: |
-        dotnet test --configuration Release --no-build --verbosity normal --framework netcoreapp3.1 test/Tinify.Tests
-        dotnet test --configuration Release --no-build --verbosity normal --framework net5.0 test/Tinify.Tests
-        dotnet test --configuration Release --no-build --verbosity normal --framework net6.0 test/Tinify.Tests
+        if ("${{ matrix.dotnet-target }}" -eq "3.1.x") {
+          dotnet test --configuration Release --no-build --verbosity normal --framework netcoreapp3.1 test/Tinify.Tests
+        } elseif ("${{ matrix.dotnet-target }}" -eq "5.0.x") {
+          dotnet test --configuration Release --no-build --verbosity normal --framework net5.0 test/Tinify.Tests
+        } elseif ("${{ matrix.dotnet-target }}" -eq "6.0.x") {
+          dotnet test --configuration Release --no-build --verbosity normal --framework net6.0 test/Tinify.Tests
+        } else {
+          Write-Error "Unsupported .NET version $env:MATRIX_DOTNET_VERSION"
+          exit 1
+        }
 
-    - name: Run tests on windows
-      if: startsWith(matrix.os, 'windows')
-      env:
-        TINIFY_KEY: ${{ secrets.TINIFY_KEY }}
-      run: |
-        dotnet test --configuration Release --no-build --verbosity normal --framework net6.0 test/Tinify.Tests
 
   integrationTests:
     if: github.event_name == 'push'
@@ -72,19 +92,20 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, macOS-latest, windows-latest]
-
+        dotnet-version: [3.1.x, 6.0.x]
+        exclude:
+          - os: macOS-latest
+            dotnet-version: 3.1.x
     steps:
     - name: Checkout
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
 
     - name: Set up dotnet
-      uses: actions/setup-dotnet@v2
+      uses: actions/setup-dotnet@v4
       with:
-        dotnet-version: |
-         3.1.x
-         6.0.x
+        dotnet-version: ${{ matrix.dotnet-version }}
 
-    - uses: actions/cache@v3
+    - uses: actions/cache@v4
       with:
         path: ~/.nuget/packages
         key: ${{ runner.os }}-nuget-${{ hashFiles('**/*.csproj') }}
@@ -104,8 +125,11 @@ jobs:
       env:
         TINIFY_KEY: ${{ secrets.TINIFY_KEY }}
       run: |
-        dotnet test --configuration Release --no-build --verbosity normal --framework netcoreapp3.1 test/Tinify.Tests.Integration
-        dotnet test --configuration Release --no-build --verbosity normal --framework net6.0 test/Tinify.Tests.Integration
+        if [ ${{ matrix.dotnet-version }} == "3.1.x" ]; then
+          dotnet test --configuration Release --no-build --verbosity normal --framework netcoreapp3.1 test/Tinify.Tests.Integration
+        else
+          dotnet test --configuration Release --no-build --verbosity normal --framework net6.0 test/Tinify.Tests.Integration
+        fi
 
     - name: Run tests on windows
       if: startsWith(matrix.os, 'windows')
@@ -124,12 +148,12 @@ jobs:
       - "integrationTests"
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
       - name: Set up dotnet
-        uses: actions/setup-dotnet@v2
+        uses: actions/setup-dotnet@v4
         with:
           dotnet-version: 6.0.x
 
