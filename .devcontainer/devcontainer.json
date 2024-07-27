@@ -1,0 +1,19 @@
+{
+	"name": "DotNet Core 3.1 and .NET 6",
+	"build": {
+	  "dockerfile": "Dockerfile"
+	},
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				"ms-dotnettools.csharp",
+				"GitHub.vscode-github-actions"
+			],
+	        "settings": {
+	          "terminal.integrated.shell.linux": "/bin/bash"
+	        }
+		}
+	},
+	"postCreateCommand": "dotnet restore",
+	"remoteUser": "vscode"
+  }

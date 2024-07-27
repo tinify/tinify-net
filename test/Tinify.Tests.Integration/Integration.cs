@@ -208,7 +208,7 @@ namespace TinifyAPI.Tests.Integration
         {
             using (var file = new TempFile())
             {
-                var options = new[] {"copyright", "location"};
+                var options = new[] {"location", "copyright"};
                 optimized.Preserve(options).ToFile(file.Path).Wait();
 
                 var size = new FileInfo(file.Path).Length;
