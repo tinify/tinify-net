@@ -220,7 +220,8 @@ namespace TinifyAPI.Tests.Integration
 
                 /* width == 137 */
                 Assert.AreEqual(137, metaData.GetImageWidth());
-                Assert.IsTrue(metaData.ContainsStringInXmpData(VoormediaCopyright));
+                bool containsCopyright = File.ReadAllText(file.Path).Contains(VoormediaCopyright);
+                Assert.IsTrue(containsCopyright, "The file should contain the copyright string.");
             }
         }
 
@@ -241,7 +242,8 @@ namespace TinifyAPI.Tests.Integration
 
             /* width == 50 */
             Assert.AreEqual(50, metaData.GetImageWidth());
-            Assert.IsTrue(metaData.ContainsStringInXmpData(VoormediaCopyright));
+            bool containsCopyright = File.ReadAllText(file.Path).Contains(VoormediaCopyright);
+            Assert.IsTrue(containsCopyright, "The file should contain the copyright string.");
         }
 
         [Test]
