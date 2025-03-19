@@ -1,3 +1,10 @@
+## 1.8.0
+
+* Added .NET 9 as target
+* CVE-2024-43485 - Upgrade System.Text.JSON
+* Removed .NET 6
+
+
 ## 1.7.0
 * Added .NET 8 as test target
 * Dropped .NET 6
