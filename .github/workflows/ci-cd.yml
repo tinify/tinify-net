@@ -22,17 +22,16 @@ jobs:
             dotnet-target: "3.1.x"
           - os: windows-latest
             dotnet-target: "3.1.x"
-          # Run 6.0.x and 8.0.x on all platforms
           - os: ubuntu-latest
-            dotnet-target: "6.0.x"
+            dotnet-target: "9.0.x"
           - os: ubuntu-latest
             dotnet-target: "8.0.x"
           - os: macOS-latest
-            dotnet-target: "6.0.x"
+            dotnet-target: "9.0.x"
           - os: macOS-latest
             dotnet-target: "8.0.x"
           - os: windows-latest
-            dotnet-target: "6.0.x"
+            dotnet-target: "9.0.x"
           - os: windows-latest
             dotnet-target: "8.0.x"
     steps:
@@ -44,16 +43,16 @@ jobs:
       with:
         dotnet-version: |
           3.1.x
-          6.0.x
           8.0.x
+          9.0.x
       if: ${{ !startsWith(matrix.os, 'macOS') }}
 
     - name: Set up dotnet macOS ARM
       uses: actions/setup-dotnet@v4
       with:
         dotnet-version: |
-          6.0.x
           8.0.x
+          9.0.x
       if: startsWith(matrix.os, 'macOS')
 
     - uses: actions/cache@v4
@@ -76,10 +75,10 @@ jobs:
       run: |
         if [ "${{ matrix.dotnet-target }}" == "3.1.x" ]; then
           dotnet test --configuration Release --no-build --verbosity normal --framework netcoreapp3.1 test/Tinify.Tests
-        elif [ "${{ matrix.dotnet-target }}" == "6.0.x" ]; then
-          dotnet test --configuration Release --no-build --verbosity normal --framework net6.0 test/Tinify.Tests
         elif [ "${{ matrix.dotnet-target }}" == "8.0.x" ]; then
           dotnet test --configuration Release --no-build --verbosity normal --framework net8.0 test/Tinify.Tests
+        elif [ "${{ matrix.dotnet-target }}" == "9.0.x" ]; then
+          dotnet test --configuration Release --no-build --verbosity normal --framework net9.0 test/Tinify.Tests
         else
           echo "Error: Unsupported .NET version ${{ matrix.dotnet-target }}" && exit 1
         fi
@@ -92,10 +91,10 @@ jobs:
           dotnet test --configuration Release --no-build --verbosity normal --framework netcoreapp3.1 test/Tinify.Tests
         } elseif ("${{ matrix.dotnet-target }}" -eq "5.0.x") {
           dotnet test --configuration Release --no-build --verbosity normal --framework net5.0 test/Tinify.Tests
-        } elseif ("${{ matrix.dotnet-target }}" -eq "6.0.x") {
-          dotnet test --configuration Release --no-build --verbosity normal --framework net6.0 test/Tinify.Tests
         } elseif ("${{ matrix.dotnet-target }}" -eq "8.0.x") {
           dotnet test --configuration Release --no-build --verbosity normal --framework net8.0 test/Tinify.Tests
+        } elseif ("${{ matrix.dotnet-target }}" -eq "9.0.x") {
+          dotnet test --configuration Release --no-build --verbosity normal --framework net9.0 test/Tinify.Tests
         } else {
           Write-Error "Unsupported .NET version $env:MATRIX_DOTNET_VERSION"
           exit 1
@@ -118,11 +117,11 @@ jobs:
             dotnet-version: "3.1.x"
           # Run 8.0.x on all platforms
           - os: ubuntu-latest
-            dotnet-version: "8.0.x"
+            dotnet-version: "9.0.x"
           - os: macOS-latest
-            dotnet-version: "8.0.x"
+            dotnet-version: "9.0.x"
           - os: windows-latest
-            dotnet-version: "8.0.x"
+            dotnet-version: "9.0.x"
     steps:
     - name: Checkout
       uses: actions/checkout@v4
@@ -154,8 +153,8 @@ jobs:
       run: |
         if [ ${{ matrix.dotnet-version }} == "3.1.x" ]; then
           dotnet test --configuration Release --no-build --verbosity normal --framework netcoreapp3.1 test/Tinify.Tests.Integration
-        elif [ ${{ matrix.dotnet-version }} == "6.0.x" ]; then
-          dotnet test --configuration Release --no-build --verbosity normal --framework net6.0 test/Tinify.Tests.Integration
+        elif [ ${{ matrix.dotnet-version }} == "9.0.x" ]; then
+          dotnet test --configuration Release --no-build --verbosity normal --framework net9.0 test/Tinify.Tests.Integration
         else
           dotnet test --configuration Release --no-build --verbosity normal --framework net8.0 test/Tinify.Tests.Integration
         fi
@@ -165,8 +164,8 @@ jobs:
       env:
         TINIFY_KEY: ${{ secrets.TINIFY_KEY }}
       run: |
-        if ("${{ matrix.dotnet-version }}" -eq "6.0.x") {
-          dotnet test --configuration Release --no-build --verbosity normal --framework net6.0 test/Tinify.Tests.Integration
+        if ("${{ matrix.dotnet-version }}" -eq "9.0.x") {
+          dotnet test --configuration Release --no-build --verbosity normal --framework net9.0 test/Tinify.Tests.Integration
         } elseif ("${{ matrix.dotnet-version }}" -eq "3.1.x") {
           dotnet test --configuration Release --no-build --verbosity normal --framework netcoreapp3.1 test/Tinify.Tests.Integration
         } elseif ("${{ matrix.dotnet-version }}" -eq "8.0.x") {
@@ -175,8 +174,6 @@ jobs:
           Write-Error "Unsupported .NET version $env:MATRIX_DOTNET_VERSION"
           exit 1
         }
-
-
 
   publish:
     if: |
@@ -195,7 +192,7 @@ jobs:
       - name: Set up dotnet
         uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: 6.0.x
+          dotnet-version: 9.0.x
 
       - name: Check if properly tagged
         run: |
