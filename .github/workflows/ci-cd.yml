@@ -17,11 +17,24 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, macOS-latest, windows-latest]
-        dotnet-target: ["3.1.x", "6.0.x", "8.0.x"]
-        exclude:
-          - os: macOS-latest
+        include:
+          - os: ubuntu-22.04
             dotnet-target: "3.1.x"
+          - os: windows-latest
+            dotnet-target: "3.1.x"
+          # Run 6.0.x and 8.0.x on all platforms
+          - os: ubuntu-latest
+            dotnet-target: "6.0.x"
+          - os: ubuntu-latest
+            dotnet-target: "8.0.x"
+          - os: macOS-latest
+            dotnet-target: "6.0.x"
+          - os: macOS-latest
+            dotnet-target: "8.0.x"
+          - os: windows-latest
+            dotnet-target: "6.0.x"
+          - os: windows-latest
+            dotnet-target: "8.0.x"
     steps:
     - name: Checkout
       uses: actions/checkout@v4
@@ -98,11 +111,18 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, macOS-latest, windows-latest]
-        dotnet-version: [3.1.x, 8.0.x]
-        exclude:
+        include:
+          - os: ubuntu-22.04
+            dotnet-version: "3.1.x"
+          - os: windows-latest
+            dotnet-version: "3.1.x"
+          # Run 8.0.x on all platforms
+          - os: ubuntu-latest
+            dotnet-version: "8.0.x"
           - os: macOS-latest
-            dotnet-version: 3.1.x
+            dotnet-version: "8.0.x"
+          - os: windows-latest
+            dotnet-version: "8.0.x"
     steps:
     - name: Checkout
       uses: actions/checkout@v4

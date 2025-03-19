@@ -40,8 +40,13 @@
 		<EmbeddedResource Include="data\cacert.pem" Exclude="bin\**;obj\**;**\*.xproj;packages\**;@(EmbeddedResource)" />
 	</ItemGroup>
 
-	<ItemGroup>
-		<PackageReference Include="System.Text.Json" Version="8.0.4" />
-	</ItemGroup>
+    <ItemGroup Condition="'$(TargetFramework)' == 'netcoreapp3.1'">
+        <PackageReference Include="System.Text.Json" Version="8.0.4" />
+    </ItemGroup>
+    <ItemGroup Condition="'$(TargetFramework)' != 'netcoreapp3.1'">
+        <PackageReference Include="System.Text.Json" Version="9.0.3" />
+    </ItemGroup>
+
+
 
 </Project>
