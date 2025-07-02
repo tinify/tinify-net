@@ -33,8 +33,10 @@ namespace TinifyAPI
 
         public Client(string key, string appIdentifier = null, string proxy = null)
         {
-            var handler = new HttpClientHandler()
+            var handler = new HttpClientHandler();
+            if (!RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
             {
+                // TLS is extremely spotty and differs per version on MacOS
                 ServerCertificateCustomValidationCallback = Internal.SSL.ValidationCallback
             };
 
