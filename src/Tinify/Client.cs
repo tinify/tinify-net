@@ -37,7 +37,7 @@ namespace TinifyAPI
             if (!RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
             {
                 // TLS is extremely spotty and differs per version on MacOS
-                ServerCertificateCustomValidationCallback = Internal.SSL.ValidationCallback
+                ServerCertificateCustomValidationCallback = Internal.SSL.ValidationCallback;
             };
 
             if (proxy != null)
