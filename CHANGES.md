@@ -1,3 +1,8 @@
+## 1.8.1
+
+* Upgrade System.Text.JSON
+* Skip custom CABundle verification on MacOS as it was broken since last MacOS update
+
 ## 1.8.0
 
 * Added .NET 9 as target
