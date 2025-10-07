@@ -9,7 +9,7 @@
 		<AssemblyName>Tinify</AssemblyName>
 		<AssemblyTitle>Tinify</AssemblyTitle>
 		<Product>Tinify</Product>
-		<Copyright>Copyright © 2017-2022</Copyright>
+		<Copyright>Copyright © 2017-2025</Copyright>
 		<PackageId>Tinify</PackageId>
 		<PackageTags>tinify;tinypng;tinyjpg;compress;images;api</PackageTags>
 		<PackageIcon>tinifyicon.png</PackageIcon>

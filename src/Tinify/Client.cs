@@ -26,33 +26,34 @@ namespace TinifyAPI
         public static readonly Uri ApiEndpoint = new("https://api.tinify.com");
 
         public static readonly short RetryCount = 1;
-        public static ushort RetryDelay { get; internal set; }= 500;
+        public static ushort RetryDelay { get; internal set; } = 500;
 
         public static readonly string UserAgent = Internal.Platform.UserAgent;
 
         private readonly HttpClient _client;
 
-        public Client(string key, string appIdentifier = null, string proxy = null)
+        public Client(string key, string appIdentifier = null, string proxy = null, HttpClient customHttpClient = null)
         {
             var handler = new HttpClientHandler();
-            if (!RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
-            {
-                // TLS is extremely spotty and differs per version on MacOS
-                handler.ServerCertificateCustomValidationCallback = Internal.SSL.ValidationCallback;
-            };
-
             if (proxy != null)
             {
                 handler.Proxy = new Internal.Proxy(proxy);
                 handler.UseProxy = true;
             }
 
-            _client = new HttpClient(handler)
+            if (customHttpClient != null)
             {
-                BaseAddress = ApiEndpoint,
-                Timeout = Timeout.InfiniteTimeSpan,
-            };
-
+                _client = customHttpClient;
+                _client.BaseAddress = ApiEndpoint;
+            }
+            else
+            {
+                _client = new HttpClient(handler)
+                {
+                    BaseAddress = ApiEndpoint,
+                    Timeout = Timeout.InfiniteTimeSpan,
+                };
+            }
 
             var userAgent = UserAgent;
             if (appIdentifier != null)
@@ -155,7 +156,7 @@ namespace TinifyAPI
                 {
                     var content = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
                     data = JsonSerializer.Deserialize<ErrorData>(content) ??
-                           new ErrorData() {Message = "Response content was empty.", Error = "ParseError"};
+                           new ErrorData() { Message = "Response content was empty.", Error = "ParseError" };
                 }
                 catch (Exception err)
                 {
