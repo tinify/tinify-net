@@ -1,3 +1,4 @@
+using System;
 using System.Net.Http;
 using System.Threading.Tasks;
 
@@ -15,6 +16,25 @@ namespace TinifyAPI
         private static string key;
         private static string appIdentifier;
         private static string proxy;
+        private static HttpClient httpClient;
+
+        public static HttpClient HttpClient
+        {
+            get
+            {
+                return httpClient;
+            }
+
+            set
+            {
+                if (value != null && proxy != null)
+                {
+                    throw new ArgumentException("Cannot set HttpClient when Proxy is already configured. Please set either HttpClient or Proxy, not both.");
+                }
+                httpClient = value;
+                ResetClient();
+            }
+        }
 
         public static string Key
         {
@@ -53,6 +73,10 @@ namespace TinifyAPI
 
             set
             {
+                if (value != null && httpClient != null)
+                {
+                    throw new ArgumentException("Cannot set Proxy when HttpClient is already configured. Please set either HttpClient or Proxy, not both.");
+                }
                 proxy = value;
                 ResetClient();
             }
@@ -88,7 +112,10 @@ namespace TinifyAPI
                     {
                         if (client == null)
                         {
-                            client = new Client(key, appIdentifier, proxy);
+                            if (httpClient != null)
+                                client = new Client(key, appIdentifier, httpClient);
+                            else
+                                client = new Client(key, appIdentifier, proxy);
                         }
                     }
                     return client;

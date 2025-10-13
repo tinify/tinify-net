@@ -17,6 +17,7 @@ namespace TinifyAPI.Tests
         {
             Tinify.Key = null;
             Tinify.Proxy = null;
+            Tinify.HttpClient = null;
         }
     }
 
@@ -125,6 +126,70 @@ namespace TinifyAPI.Tests
     }
 
     [TestFixture]
+    public class Tinify_ProxyHttpClientConflict : Reset
+    {
+        [Test]
+        public void WithProxyFirst_HttpClientSecond_Should_ThrowException()
+        {
+            Tinify.Proxy = "http://localhost:8080";
+
+            var httpClient = new HttpClient();
+            var error = Assert.Throws<ArgumentException>(() =>
+            {
+                Tinify.HttpClient = httpClient;
+            });
+
+            Assert.AreEqual(
+                "Cannot set HttpClient when Proxy is already configured. Please set either HttpClient or Proxy, not both.",
+                error?.Message
+            );
+        }
+
+        [Test]
+        public void WithHttpClientFirst_ProxySecond_Should_ThrowException()
+        {
+            var httpClient = new HttpClient();
+            Tinify.HttpClient = httpClient;
+
+            var error = Assert.Throws<ArgumentException>(() =>
+            {
+                Tinify.Proxy = "http://localhost:8080";
+            });
+
+            Assert.AreEqual(
+                "Cannot set Proxy when HttpClient is already configured. Please set either HttpClient or Proxy, not both.",
+                error?.Message
+            );
+        }
+
+        [Test]
+        public void CanSetProxyAfterHttpClientIsCleared()
+        {
+            var httpClient = new HttpClient();
+            Tinify.HttpClient = httpClient;
+            Tinify.HttpClient = null;
+
+            Assert.DoesNotThrow(() =>
+            {
+                Tinify.Proxy = "http://localhost:8080";
+            });
+        }
+
+        [Test]
+        public void CanSetHttpClientAfterProxyIsCleared()
+        {
+            Tinify.Proxy = "http://localhost:8080";
+            Tinify.Proxy = null;
+
+            var httpClient = new HttpClient();
+            Assert.DoesNotThrow(() =>
+            {
+                Tinify.HttpClient = httpClient;
+            });
+        }
+    }
+
+    [TestFixture]
     public class Tinify_Validate : Reset
     {
         [Test]
@@ -148,7 +213,7 @@ namespace TinifyAPI.Tests
 
             Helper.MockClient(Tinify.Client);
             Helper.MockHandler.Expect("https://api.tinify.com/shrink").Respond(
-                (HttpStatusCode) 429,
+                (HttpStatusCode)429,
                 new StringContent("{\"error\":\"Too may requests\",\"message\":\"Your monthly limit has been exceeded\"}")
             );
 

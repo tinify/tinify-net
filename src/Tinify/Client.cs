@@ -32,7 +32,7 @@ namespace TinifyAPI
 
         private readonly HttpClient _client;
 
-        public Client(string key, string appIdentifier = null, string proxy = null, HttpClient customHttpClient = null)
+        public Client(string key, string appIdentifier = null, string proxy = null)
         {
             var handler = new HttpClientHandler();
             if (proxy != null)
@@ -41,6 +41,28 @@ namespace TinifyAPI
                 handler.UseProxy = true;
             }
 
+            _client = new HttpClient(handler)
+            {
+                BaseAddress = ApiEndpoint,
+                Timeout = Timeout.InfiniteTimeSpan,
+            };
+
+
+            var userAgent = UserAgent;
+            if (appIdentifier != null)
+            {
+                userAgent += " " + appIdentifier;
+            }
+
+            _client.DefaultRequestHeaders.Add("User-Agent", userAgent);
+
+            var credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes("api:" + key));
+            _client.DefaultRequestHeaders.Add("Authorization", "Basic " + credentials);
+        }
+
+        public Client(string key, string appIdentifier = null, HttpClient customHttpClient = null)
+        {
+
             if (customHttpClient != null)
             {
                 _client = customHttpClient;
@@ -48,7 +70,7 @@ namespace TinifyAPI
             }
             else
             {
-                _client = new HttpClient(handler)
+                _client = new HttpClient()
                 {
                     BaseAddress = ApiEndpoint,
                     Timeout = Timeout.InfiniteTimeSpan,
@@ -66,6 +88,8 @@ namespace TinifyAPI
             var credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes("api:" + key));
             _client.DefaultRequestHeaders.Add("Authorization", "Basic " + credentials);
         }
+
+
 
         public Task<HttpResponseMessage> Request(Method method, string url)
         {
