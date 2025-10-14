@@ -32,6 +32,11 @@ namespace TinifyAPI
 
         private readonly HttpClient _client;
 
+        public Client(string key, string appIdentifier)
+            : this(key, appIdentifier, (string)null)
+        {
+        }
+
         public Client(string key, string appIdentifier = null, string proxy = null)
         {
             var handler = new HttpClientHandler();
