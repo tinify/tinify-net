@@ -26,21 +26,25 @@ namespace TinifyAPI
         public static readonly Uri ApiEndpoint = new("https://api.tinify.com");
 
         public static readonly short RetryCount = 1;
-        public static ushort RetryDelay { get; internal set; }= 500;
+        public static ushort RetryDelay { get; internal set; } = 500;
 
         public static readonly string UserAgent = Internal.Platform.UserAgent;
 
         private readonly HttpClient _client;
 
+        public Client(string key)
+            : this(key, (string)null, (string)null)
+        {
+        }
+
+        public Client(string key, string appIdentifier = null)
+            : this(key, appIdentifier, (string)null)
+        {
+        }
+
         public Client(string key, string appIdentifier = null, string proxy = null)
         {
             var handler = new HttpClientHandler();
-            if (!RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
-            {
-                // TLS is extremely spotty and differs per version on MacOS
-                handler.ServerCertificateCustomValidationCallback = Internal.SSL.ValidationCallback;
-            };
-
             if (proxy != null)
             {
                 handler.Proxy = new Internal.Proxy(proxy);
@@ -65,6 +69,37 @@ namespace TinifyAPI
             var credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes("api:" + key));
             _client.DefaultRequestHeaders.Add("Authorization", "Basic " + credentials);
         }
+
+        public Client(string key, string appIdentifier = null, HttpClient customHttpClient = null)
+        {
+
+            if (customHttpClient != null)
+            {
+                _client = customHttpClient;
+                _client.BaseAddress = ApiEndpoint;
+            }
+            else
+            {
+                _client = new HttpClient()
+                {
+                    BaseAddress = ApiEndpoint,
+                    Timeout = Timeout.InfiniteTimeSpan,
+                };
+            }
+
+            var userAgent = UserAgent;
+            if (appIdentifier != null)
+            {
+                userAgent += " " + appIdentifier;
+            }
+
+            _client.DefaultRequestHeaders.Add("User-Agent", userAgent);
+
+            var credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes("api:" + key));
+            _client.DefaultRequestHeaders.Add("Authorization", "Basic " + credentials);
+        }
+
+
 
         public Task<HttpResponseMessage> Request(Method method, string url)
         {
@@ -155,7 +190,7 @@ namespace TinifyAPI
                 {
                     var content = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
                     data = JsonSerializer.Deserialize<ErrorData>(content) ??
-                           new ErrorData() {Message = "Response content was empty.", Error = "ParseError"};
+                           new ErrorData() { Message = "Response content was empty.", Error = "ParseError" };
                 }
                 catch (Exception err)
                 {

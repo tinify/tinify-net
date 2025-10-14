@@ -1,3 +1,8 @@
+## 1.9.0
+
+* Removed custom TLS stack
+* Allowed option for callers of library to inject own http client
+
 ## 1.8.1
 
 * Upgrade System.Text.JSON
@@ -8,7 +13,6 @@
 * Added .NET 9 as target
 * CVE-2024-43485 - Upgrade System.Text.JSON
 * Removed .NET 6
-
 
 ## 1.7.0
 * Added .NET 8 as test target
