@@ -1,3 +1,7 @@
+## Unreleased
+
+* Added `Format` constants for the media types `Convert` accepts, including JPEG XL (`image/jxl`).
+
 ## 1.9.0
 
 * Removed custom TLS stack
