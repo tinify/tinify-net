@@ -184,6 +184,9 @@ jobs:
       - "tests"
       - "integrationTests"
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write # mint the OIDC token nuget.org exchanges for a short-lived key
     steps:
       - uses: actions/checkout@v4
         with:
@@ -210,6 +213,12 @@ jobs:
           echo "Clean Version: ${CURRENT_TAG}"
           dotnet pack src/Tinify/Tinify.csproj -v normal -c Release --include-symbols --include-source -p:PackageVersion="${CURRENT_TAG}" -o .
 
+      - name: NuGet login
+        id: nuget-login
+        uses: NuGet/login@v1
+        with:
+          user: ${{ secrets.NUGET_USER }}
+
       - name: Push to Nuget
         run: |
-          dotnet nuget push *.nupkg --skip-duplicate -s https://api.nuget.org/v3/index.json --api-key ${{secrets.NUGET_API_KEY}}
+          dotnet nuget push *.nupkg --skip-duplicate -s https://api.nuget.org/v3/index.json --api-key ${{ steps.nuget-login.outputs.NUGET_API_KEY }}
