@@ -43,6 +43,28 @@ class Compress
 }
 ```
 
+Convert to another format with the `Format` constants (`WebP`, `Png`,
+`Jpeg`, `Jpg`, `Avif`, `Jxl` and `Any`):
+
+```csharp
+Tinify.FromFile("unoptimized.png")
+    .Convert(new { type = Format.Jxl })
+    .ToFile("optimized.jxl")
+    .Wait();
+```
+
+Pass several and the API returns the smallest result:
+
+```csharp
+var result = await Tinify.FromFile("unoptimized.png")
+    .Convert(new { type = new[] { Format.Jxl, Format.WebP } })
+    .GetResult();
+
+await result.ToFile($"optimized.{result.Extension}");
+```
+
+The constants are plain strings, so `type = "image/jxl"` keeps working.
+
 ## Running tests
 
 ```
